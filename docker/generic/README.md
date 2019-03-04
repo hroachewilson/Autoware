@@ -12,13 +12,24 @@ $ cd Autoware/docker/generic/
 
 # Ubuntu 16.04 (Kinetic)
 $ sh build.sh kinetic
+
+# Ubuntu 16.04 (Kinetic with OpenGL for RVIZ)
+$ sh build.sh kinetic nvidia
+
 ```
 
 ## How to Run
 ```
 
-# Ubuntu 16.04 (Kinetic)
+# Ubuntu 16.04 (Dockerhub Kinetic)
 $ ./run.sh -t latest-kinetic
+
+# Ubuntu 16.04 (AEV Kinetic)
+$ ./run-built.sh autoware-kinetic
+
+# Ubuntu 16.04 (AEV Kinetic with OpenGL for RVIZ)
+$ ./run-built.sh autoware-kinetic-nvidia
+
 ```
 
 |Option|Default|Description|

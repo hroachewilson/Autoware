@@ -1,15 +1,29 @@
 FROM nvidia/cuda:9.0-devel-ubuntu16.04
 MAINTAINER Yuki Iida <yuki.iida@tier4.jp>
 
+# Install kvaser can interface drivers
+RUN apt-get update && apt-get install -y linux-headers-`uname -r`
+RUN apt-get update && apt-get install -y software-properties-common
+RUN apt-add-repository ppa:jwhitleyastuff/linuxcan-dkms
+RUN sh -c 'echo "deb [ arch=amd64 ] http://packages.dataspeedinc.com/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-dataspeed-public.list'
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys FF6D3CDA
+RUN apt-get update
+
 # Develop
 RUN apt-get update && apt-get install -y \
-        software-properties-common \
-        wget curl git cmake cmake-curses-gui \
+        wget curl git tar cmake cmake-curses-gui build-essential \
         libboost-all-dev \
         libflann-dev \
         libgsl0-dev \
         libgoogle-perftools-dev \
-        libeigen3-dev
+        libeigen3-dev \
+        libelf-dev \
+        linuxcan-dkms
+
+# Make and install kvaser canlib
+ADD https://www.kvaser.com/download/?utm_source=software&utm_ean=7330130980754&utm_status=latest ./
+RUN tar -xzf linuxcan.tar.gz && rm linuxcan.tar.gz
+RUN cd linuxcan && make && cd leaf && sh ./installscript.sh && cd ../../ && rm -rf linuxcan
 
 # Intall some basic GUI and sound libs
 RUN apt-get update && apt-get install -y \
@@ -29,7 +43,17 @@ RUN apt-get update && apt-get install -y \
 RUN sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
 RUN apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 421C365BD9FF1F717815A3895523BAEEB01FA116
 RUN apt-get update && apt-get install -y ros-kinetic-desktop-full ros-kinetic-nmea-msgs ros-kinetic-nmea-navsat-driver ros-kinetic-sound-play ros-kinetic-jsk-visualization ros-kinetic-grid-map ros-kinetic-gps-common
-RUN apt-get update && apt-get install -y ros-kinetic-controller-manager ros-kinetic-ros-control ros-kinetic-ros-controllers ros-kinetic-gazebo-ros-control ros-kinetic-joystick-drivers
+RUN apt-get update && apt-get install -y \
+    ros-kinetic-controller-manager \
+    ros-kinetic-ros-control \
+    ros-kinetic-ros-controllers \
+    ros-kinetic-gazebo-ros-control \
+    ros-kinetic-joystick-drivers \
+	ros-kinetic-can-msgs \
+    ros-kinetic-dataspeed-can-msg-filters \
+    ros-kinetic-dbw-mkz-can \
+    ros-kinetic-dataspeed-can-msgs 
+
 RUN apt-get update && apt-get install -y libnlopt-dev freeglut3-dev qtbase5-dev libqt5opengl5-dev libssh2-1-dev libarmadillo-dev libpcap-dev gksu libgl1-mesa-dev libglew-dev python-wxgtk3.0 software-properties-common libmosquitto-dev libyaml-cpp-dev python-flask python-requests
 
 # Add basic user
