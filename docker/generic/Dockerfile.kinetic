@@ -11,7 +11,7 @@ RUN apt-get update
 
 # Develop
 RUN apt-get update && apt-get install -y \
-        wget curl git tar cmake cmake-curses-gui build-essential \
+        wget netcat curl git tar cmake cmake-curses-gui build-essential \
         libboost-all-dev \
         libflann-dev \
         libgsl0-dev \

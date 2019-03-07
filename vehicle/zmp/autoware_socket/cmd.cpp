@@ -360,6 +360,8 @@ void *MainWindow::CMDGetterEntry(void *a)
       Control(cmddata.vel, main);
 #endif
     }
+    std::cout << "DATA:\n" << std::endl;
+    std::cout << string(cmddata.accel) + ' ' + string(cmddata.brake) + ' ' + string(cmddata.steer) << std::endl;
 
     // get interval in milliseconds.
     interval = cmd_rx_interval - (getTime() - tstamp);

@@ -8,7 +8,6 @@ XAUTH=/home/$USER/.Xauthority
 SHARED_DIR=/home/autoware/.autoware
 HOST_DIR=/home/$USER/shared_dir
 DOCKER_HUB_REPO="autoware/autoware"
-TAG="latest-kinetic"
 
 while getopts ":ht:r:s:" opt; do
   case $opt in
@@ -36,7 +35,6 @@ while getopts ":ht:r:s:" opt; do
   esac
 done
 
-echo "Using $DOCKER_HUB_REPO:$TAG"
 echo "Shared directory: ${HOST_DIR}"
 nvidia-docker run \
   -it --rm \

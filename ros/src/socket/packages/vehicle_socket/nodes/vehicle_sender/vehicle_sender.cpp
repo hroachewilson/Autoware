@@ -81,6 +81,7 @@ static void vehicleCmdCallback(const autoware_msgs::VehicleCmd& msg)
   command_data.brakeValue = msg.brake_cmd.brake;
   command_data.linear_velocity = msg.ctrl_cmd.linear_velocity;
   command_data.steering_angle = msg.ctrl_cmd.steering_angle;
+  std::cout << "received vehicle_cmd" << std::endl;
 }
 
 static void *sendCommand(void *arg)
@@ -102,6 +103,8 @@ static void *sendCommand(void *arg)
   oss << command_data.lampValue;
 
   std::string cmd(oss.str());
+  std::cout << cmd.c_str() << std::endl;
+
   ssize_t n = write(client_sock, cmd.c_str(), cmd.size());
   if(n < 0){
     std::perror("write");
