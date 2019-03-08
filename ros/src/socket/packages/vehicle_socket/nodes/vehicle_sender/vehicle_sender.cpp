@@ -16,6 +16,7 @@
 
 #include <ros/ros.h>
 #include "autoware_msgs/VehicleCmd.h"
+#include <can_msgs/Frame.h>
 
 #include <iostream>
 #include <string>
@@ -81,7 +82,6 @@ static void vehicleCmdCallback(const autoware_msgs::VehicleCmd& msg)
   command_data.brakeValue = msg.brake_cmd.brake;
   command_data.linear_velocity = msg.ctrl_cmd.linear_velocity;
   command_data.steering_angle = msg.ctrl_cmd.steering_angle;
-  std::cout << "received vehicle_cmd" << std::endl;
 }
 
 static void *sendCommand(void *arg)
@@ -186,7 +186,6 @@ int main(int argc, char **argv)
   ros::init(argc ,argv, "vehicle_sender") ;
   ros::NodeHandle nh;
 
-  std::cout << "vehicle sender" << std::endl;
   ros::Subscriber sub = nh.subscribe("/vehicle_cmd", 1, vehicleCmdCallback);
 
   command_data.reset();
