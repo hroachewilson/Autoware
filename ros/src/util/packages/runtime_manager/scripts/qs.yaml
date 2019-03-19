@@ -52,8 +52,8 @@ buttons :
     desc: oculus_rift_qs desc sample
     run : echo 'oculus rift'
   vehicle_gateway_qs :
-    desc: vehicle_gateway_qs desc sample
-    run : roslaunch runtime_manager vehicle_socket.launch
+    desc: aev_interface_qs desc sample
+    run : roslaunch aev aev_interface.launch
   remote_control_qs :
     desc: remote_control_qs desc sample
     run : roslaunch runtime_manager mqtt_socket.launch
@@ -63,7 +63,7 @@ buttons :
 
   auto_pilot_qs :
     desc: auto_pilot_qs desc sample
-    run : echo 'auto pilot'
+    run : roslaunch aev control_node.launch
 
   rosbag_qs :
     desc : rosbag_qs desc sample

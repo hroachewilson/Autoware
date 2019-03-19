@@ -40,13 +40,13 @@ void AevInterface::initForROS()
 
   // setup subscriber
   twist_cmd_sub_    = nh_.subscribe("twist_cmd", 10, &AevInterface::callbackFromTwistCmd, this);
-  control_mode_sub_ = nh_.subscribe("/as/control_mode", 10, &AevInterface::callbackFromControlMode, this);
+  control_mode_sub_ = nh_.subscribe("/aev/control_mode", 10, &AevInterface::callbackFromControlMode, this);
   speed_sub_        = nh_.subscribe("/vehicle/steering_report", 10, &AevInterface::callbackFromSteeringReport, this);
 
   // setup publisher
-  steer_mode_pub_    = nh_.advertise<automotive_platform_msgs::SteerMode>("/as/arbitrated_steering_commands", 10);
-  speed_mode_pub_    = nh_.advertise<automotive_platform_msgs::SpeedMode>("/as/arbitrated_speed_commands", 10);
-  current_twist_pub_ = nh_.advertise<geometry_msgs::TwistStamped>("as_current_twist", 10);
+  steer_mode_pub_    = nh_.advertise<automotive_platform_msgs::SteerMode>("/aev/arbitrated_steering_commands", 10);
+  speed_mode_pub_    = nh_.advertise<automotive_platform_msgs::SpeedMode>("/aev/arbitrated_speed_commands", 10);
+  current_twist_pub_ = nh_.advertise<geometry_msgs::TwistStamped>("aev_current_twist", 10);
 }
 
 void AevInterface::run()

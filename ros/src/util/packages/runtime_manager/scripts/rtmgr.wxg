@@ -297,11 +297,11 @@
                                                 <option>1</option>
                                                 <border>4</border>
                                                 <flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
-                                                <object class="wxToggleButton" name="button_vehicle_gateway_qs" base="EditToggleButton">
+                                                <object class="wxToggleButton" name="button_aev_interface_qs" base="EditToggleButton">
                                                     <events>
                                                         <handler event="EVT_TOGGLEBUTTON">OnLaunchKill</handler>
                                                     </events>
-                                                    <label>Vehicle Gateway</label>
+                                                    <label>AEV Interface</label>
                                                 </object>
                                             </object>
                                             <object class="sizeritem">
@@ -1250,11 +1250,11 @@
                                                 <option>1</option>
                                                 <border>4</border>
                                                 <flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
-                                                <object class="wxToggleButton" name="button_vehicle_gateway_interface" base="EditToggleButton">
+                                                <object class="wxToggleButton" name="button_aev_interface_interface" base="EditToggleButton">
                                                     <events>
                                                         <handler event="EVT_TOGGLEBUTTON">OnLaunchKill</handler>
                                                     </events>
-                                                    <label>Vehicle Gateway</label>
+                                                    <label>AEV Interface</label>
                                                 </object>
                                             </object>
                                             <object class="sizeritem">

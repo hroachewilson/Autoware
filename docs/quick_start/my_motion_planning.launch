@@ -1,7 +1,7 @@
 <launch>
 
-  <!-- Vehicle Contorl -->
-  <include file="$(find runtime_manager)/scripts/vehicle_socket.launch"/>
+  <!-- kvaser_interface -->
+  <include file="$(find kvaser_interface)/launch/kvaser_can_bridge.launch"/>
 
   <!-- obstacle_avoid -->
   <include file="$(find astar_planner)/launch/obstacle_avoid.launch"/>

@@ -37,10 +37,16 @@ add_executable(aev_interface
   nodes/aev_interface/aev_interface.cpp
 )
 
-target_link_libraries(aev_interface ${catkin_LIBRARIES})
-add_dependencies(aev_interface ${catkin_EXPORTED_TARGETS})
+add_executable(control_node
+  nodes/control_node/control_node.cpp
+)
 
-install(TARGETS aev_interface 
+target_link_libraries(aev_interface ${catkin_LIBRARIES})
+target_link_libraries(control_node ${catkin_LIBRARIES})
+add_dependencies(aev_interface ${catkin_EXPORTED_TARGETS})
+add_dependencies(control_node ${catkin_EXPORTED_TARGETS})
+
+install(TARGETS aev_interface control_node
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
