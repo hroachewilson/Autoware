@@ -1,6 +1,4 @@
-<!-- -->
+<?xml version="1.0"?>
 <launch>
-
 	<node pkg="aev" type="control_node" name="control_node" output="screen"></node>
-
 </launch>

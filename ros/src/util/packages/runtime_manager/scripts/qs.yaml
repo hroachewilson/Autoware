@@ -51,7 +51,7 @@ buttons :
   oculus_rift_qs :
     desc: oculus_rift_qs desc sample
     run : echo 'oculus rift'
-  vehicle_gateway_qs :
+  aev_interface_qs :
     desc: aev_interface_qs desc sample
     run : roslaunch aev aev_interface.launch
   remote_control_qs :

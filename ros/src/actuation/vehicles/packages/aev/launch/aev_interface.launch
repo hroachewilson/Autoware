@@ -1,4 +1,4 @@
-<!-- -->
+<?xml version="1.0"?>
 <launch>
 
 	<arg name="acceleration_limit" default="3.0"/>
