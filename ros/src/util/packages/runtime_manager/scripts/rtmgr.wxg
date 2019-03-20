@@ -348,7 +348,7 @@
                                                 <flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
                                                 <object class="wxToggleButton" name="button_auto_pilot_qs" base="EditToggleButton">
                                                     <events>
-                                                        <handler event="EVT_TOGGLEBUTTON">OnAutoPilot</handler>
+                                                        <handler event="EVT_TOGGLEBUTTON">OnLaunchKill</handler>
                                                     </events>
                                                     <size>135, 29</size>
                                                     <label>Auto Pilot</label>
@@ -1309,7 +1309,7 @@
                                                 <flag>wxALL|wxEXPAND</flag>
                                                 <object class="wxToggleButton" name="button_auto_pilot_interface" base="EditToggleButton">
                                                     <events>
-                                                        <handler event="EVT_TOGGLEBUTTON">OnAutoPilot</handler>
+                                                        <handler event="EVT_TOGGLEBUTTON">OnLaunchKill</handler>
                                                     </events>
                                                     <label>Auto Pilot</label>
                                                 </object>
