@@ -1,9 +1,12 @@
 [submodule "ros/src/actuation/vehicles/packages/as/pacmod_game_control"]
 	path = ros/src/actuation/vehicles/packages/as/pacmod_game_control
-	url = https://github.com/astuff/pacmod_game_control.git
+	url = https://github.com/hroachewilson/pacmod_game_control.git
 [submodule "ros/src/actuation/vehicles/packages/as/pacmod"]
 	path = ros/src/actuation/vehicles/packages/as/pacmod
-	url = https://github.com/astuff/pacmod.git
+	url = https://github.com/hroachewilson/pacmod.git
 [submodule "ros/src/actuation/vehicles/packages/as/kvaser_interface"]
 	path = ros/src/actuation/vehicles/packages/as/kvaser_interface
 	url = https://github.com/astuff/kvaser_interface.git
+[submodule "ros/src/msgs/automotive_autonomy_msgs"]
+	path = ros/src/msgs/automotive_autonomy_msgs
+	url = https://github.com/astuff/automotive_autonomy_msgs.git
