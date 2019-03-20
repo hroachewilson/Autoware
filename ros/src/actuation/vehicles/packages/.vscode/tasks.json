@@ -6,7 +6,7 @@
         {
             "label": "build aev package",
             "type": "shell",
-            "command": "cd ../../../../.. && catkin_make --pkg aev",
+            "command": "cd ../../../.. && catkin_make --pkg aev kvaser_interface pacmod pacmod_game_control",
             "group": {
                 "kind": "build",
                 "isDefault": true
