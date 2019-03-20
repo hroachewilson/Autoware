@@ -12,6 +12,47 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ 
+void AccelCmdMsg::encode(double accel_cmd)
+{
+  data.assign(8, 0);
+  uint16_t cmdInt = static_cast<uint16_t>(accel_cmd * 1000.0);
+  data[0] = (cmdInt & 0xFF00) >> 8;
+  data[1] = cmdInt & 0x00FF;
+}
+
+void SteerCmdMsg::encode(double steer_pos, double steer_spd)
+{
+  data.assign(8, 0);
+  int32_t raw_pos = static_cast<int32_t>(1000.0 * steer_pos);
+  uint32_t raw_spd = (uint32_t)(1000.0 * steer_spd);
+
+  data[0] = (raw_pos & 0xFF000000) >> 24;
+  data[1] = (raw_pos & 0x00FF0000) >> 16;
+  data[2] = (raw_pos & 0x0000FF00) >> 8;
+  data[3] = raw_pos & 0x000000FF;
+  data[4] = (raw_spd & 0xFF000000) >> 24;
+  data[5] = (raw_spd & 0x00FF0000) >> 16;
+  data[6] = (raw_spd & 0x0000FF00) >> 8;
+  data[7] = raw_spd & 0x000000FF;
+}
+
+void BrakeCmdMsg::encode(double brake_pct)
+{
+  data.assign(8, 0);
+  uint16_t raw_pct = static_cast<uint16_t>(1000.0 * brake_pct);
+
+  data[0] = (raw_pct & 0xFF00) >> 8;
+  data[1] = (raw_pct & 0x00FF);
+}
+
+
+
+
+
+
+
+
  */
 
 #include "aev_interface.h"

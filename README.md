@@ -1,5 +1,3 @@
-[![Autoware](https://www.autoware.ai/static/img/autoware_web_img.png)](https://www.autoware.ai)
-
 # AEV Autoware Fork
 
 The purpose of this fork is to implement an interface, modelled on autonomoustuff's ssc_interface, that sends and receives can messages for throttle and steering wheel position. The Autoware Process Manager UI has been updated to include an AEV Interface button, and functionality has been added to the Auto Pilot button so that it toggles a control_mode message on the /aev/control_mode topic. The result is that steering and throttle can messages are enabled/disabled. 
@@ -8,7 +6,7 @@ To achieve this, two activities have taken place.
 1. The Dockerfile edited so as to install drivers for Kvaser Leaf Lite 2 can interface; and 
 2. AEV actuation packages have been created in ros/src/actuation/vehicles/packages/aev/ directory.
 
-## Standard AEV README.md below.
+## ----------------------------
 
 
 | *master* | *develop* |

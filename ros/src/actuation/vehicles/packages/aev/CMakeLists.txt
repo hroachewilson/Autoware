@@ -12,6 +12,7 @@ find_package(
 	message_filters
 	automotive_navigation_msgs
 	autoware_msgs
+  can_msgs
 )
 
 catkin_package(
