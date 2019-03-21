@@ -12,47 +12,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- 
-void AccelCmdMsg::encode(double accel_cmd)
-{
-  data.assign(8, 0);
-  uint16_t cmdInt = static_cast<uint16_t>(accel_cmd * 1000.0);
-  data[0] = (cmdInt & 0xFF00) >> 8;
-  data[1] = cmdInt & 0x00FF;
-}
-
-void SteerCmdMsg::encode(double steer_pos, double steer_spd)
-{
-  data.assign(8, 0);
-  int32_t raw_pos = static_cast<int32_t>(1000.0 * steer_pos);
-  uint32_t raw_spd = (uint32_t)(1000.0 * steer_spd);
-
-  data[0] = (raw_pos & 0xFF000000) >> 24;
-  data[1] = (raw_pos & 0x00FF0000) >> 16;
-  data[2] = (raw_pos & 0x0000FF00) >> 8;
-  data[3] = raw_pos & 0x000000FF;
-  data[4] = (raw_spd & 0xFF000000) >> 24;
-  data[5] = (raw_spd & 0x00FF0000) >> 16;
-  data[6] = (raw_spd & 0x0000FF00) >> 8;
-  data[7] = raw_spd & 0x000000FF;
-}
-
-void BrakeCmdMsg::encode(double brake_pct)
-{
-  data.assign(8, 0);
-  uint16_t raw_pct = static_cast<uint16_t>(1000.0 * brake_pct);
-
-  data[0] = (raw_pct & 0xFF00) >> 8;
-  data[1] = (raw_pct & 0x00FF);
-}
-
-
-
-
-
-
-
-
  */
 
 #include "aev_interface.h"
@@ -85,9 +44,13 @@ void AevInterface::initForROS()
   speed_sub_        = nh_.subscribe("/vehicle/steering_report", 10, &AevInterface::callbackFromSteeringReport, this);
 
   // setup publisher
-  steer_mode_pub_    = nh_.advertise<automotive_platform_msgs::SteerMode>("/aev/arbitrated_steering_commands", 10);
-  speed_mode_pub_    = nh_.advertise<automotive_platform_msgs::SpeedMode>("/aev/arbitrated_speed_commands", 10);
+  //steer_mode_pub_    = nh_.advertise<automotive_platform_msgs::SteerMode>("/aev/arbitrated_steering_commands", 10);
+  //speed_mode_pub_    = nh_.advertise<automotive_platform_msgs::SpeedMode>("/aev/arbitrated_speed_commands", 10);
   current_twist_pub_ = nh_.advertise<geometry_msgs::TwistStamped>("aev_current_twist", 10);
+
+  steer_cmd_pub_    = nh_.advertise<pacmod_msgs::PositionWithSpeed>("as_rx/steer_cmd", 10);
+  speed_cmd_pub_    = nh_.advertise<pacmod_msgs::PacmodCmd>("as_rx/speed_cmd", 10);
+  brake_cmd_pub_    = nh_.advertise<pacmod_msgs::PacmodCmd>("as_rx/brake_cmd", 10);
 }
 
 void AevInterface::run()
@@ -99,6 +62,9 @@ void AevInterface::run()
 void AevInterface::callbackFromTwistCmd(const geometry_msgs::TwistStampedConstPtr &msg)
 {
   int mode;
+  //double curvature = msg->twist.angular.z / msg->twist.linear.x;
+  float acceleration_limit = 3.0;
+  float deceleration_limit = 3.0;
   if (control_mode_)
   {
     mode = 1;
@@ -107,27 +73,28 @@ void AevInterface::callbackFromTwistCmd(const geometry_msgs::TwistStampedConstPt
   {
     mode = 0;
   }
+  pacmod_msgs::PacmodCmd brake_cmd;
+  pacmod_msgs::PacmodCmd speed_cmd;
+  pacmod_msgs::PositionWithSpeed steer_cmd;
 
-  automotive_platform_msgs::SpeedMode speed_mode;
-  speed_mode.header = msg->header;
-  speed_mode.mode = mode;
-  speed_mode.speed = msg->twist.linear.x;
-  speed_mode.acceleration_limit = 3.0;
-  speed_mode.deceleration_limit = 3.0;
+  // Required information: Desired wheel angle [rad], angle velocity [rad/s], throttle pos [0,1]
 
-  automotive_platform_msgs::SteerMode steer_mode;
-  steer_mode.header = msg->header;
-  steer_mode.mode = mode;
-  double curvature = msg->twist.angular.z / msg->twist.linear.x;
-  steer_mode.curvature = msg->twist.linear.x <= 0 ? 0 : curvature;
-  steer_mode.max_curvature_rate = 0.75;
+  // Set headers
+  speed_cmd.header = msg->header;
+  steer_cmd.header = msg->header;
+  brake_cmd.header = msg->header;
+  
+  // Implement a hack such that desired steer angle and vehicle velocity stored in speed_cmd
+  steer_cmd.angular_position = msg->twist.angular.z / msg->twist.linear.x;
+  steer_cmd.angular_velocity_limit = msg->twist.linear.x;
 
+  // Print status
   std::cout << "mode: "  << mode << std::endl;
-  std::cout << "speed: " << speed_mode.speed << std::endl;
-  std::cout << "steer: " << steer_mode.curvature << std::endl;
+  std::cout << "speed: " << steer_cmd.angular_velocity_limit << std::endl;
+  std::cout << "steer: " << steer_cmd.angular_position << std::endl;
 
-  speed_mode_pub_.publish(speed_mode);
-  steer_mode_pub_.publish(steer_mode);
+  // Publish data
+  steer_cmd_pub_.publish(steer_cmd);
 }
 
 void AevInterface::callbackFromControlMode(const std_msgs::BoolConstPtr &msg)

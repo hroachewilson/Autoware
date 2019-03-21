@@ -47,7 +47,7 @@ target_link_libraries(control_node ${catkin_LIBRARIES})
 add_dependencies(aev_interface ${catkin_EXPORTED_TARGETS})
 add_dependencies(control_node ${catkin_EXPORTED_TARGETS})
 
-install(TARGETS aev_interface control_node
+install(TARGETS control_node aev_interface
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}

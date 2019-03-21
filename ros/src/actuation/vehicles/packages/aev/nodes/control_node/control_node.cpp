@@ -40,13 +40,16 @@ int main(int argc, char **argv)
 
 	ros::NodeHandle nh_;
 	std_msgs::Bool msg;
-	ros::Publisher control_mode_pub;
+	ros::Publisher pacmod_control_mode_pub;
+	ros::Publisher aev_control_mode_pub;
 
 	msg.data = true;
 
-  // Instantiate control node publisher and publish control_mode=true
-  control_mode_pub    = nh_.advertise<std_msgs::Bool>("/aev/control_mode", 10, true);
-	control_mode_pub.publish(msg);
+  // Instantiate control node publisher
+  pacmod_control_mode_pub   = nh_.advertise<std_msgs::Bool>("/as_rx/enable", 10, true);
+  aev_control_mode_pub      = nh_.advertise<std_msgs::Bool>("/aev_control_mode", 10, true);
+	pacmod_control_mode_pub.publish(msg);
+	aev_control_mode_pub.publish(msg);
 
 	// Do our own spin loop
   while (!g_request_shutdown)
@@ -59,7 +62,8 @@ int main(int argc, char **argv)
 
 	// Node is shutting down. Unlatch autopilot
 	msg.data = false;	
-	control_mode_pub.publish(msg);
+	aev_control_mode_pub.publish(msg);
+	pacmod_control_mode_pub.publish(msg);
 	ros::shutdown();
 
   return 0;

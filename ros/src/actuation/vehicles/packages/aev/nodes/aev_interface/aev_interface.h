@@ -24,6 +24,8 @@
 #include <automotive_platform_msgs/SteerMode.h>
 #include <automotive_platform_msgs/SpeedMode.h>
 #include <dbw_mkz_msgs/SteeringReport.h>
+#include <pacmod_msgs/PacmodCmd.h>
+#include <pacmod_msgs/PositionWithSpeed.h>
 
 namespace aev
 {
@@ -41,9 +43,12 @@ private:
   ros::NodeHandle private_nh_;
 
   // publisher
-  ros::Publisher steer_mode_pub_;
-  ros::Publisher speed_mode_pub_;
+  //ros::Publisher steer_mode_pub_;
+  //ros::Publisher speed_mode_pub_;
   ros::Publisher current_twist_pub_;
+  ros::Publisher steer_cmd_pub_;
+  ros::Publisher speed_cmd_pub_;
+  ros::Publisher brake_cmd_pub_;
 
   // subscriber
   ros::Subscriber twist_cmd_sub_;
