@@ -1,7 +1,7 @@
 <launch>
 
-  <!-- kvaser_interface -->
-  <include file="$(find kvaser_interface)/launch/kvaser_can_bridge.launch"/>
+  <!-- pacmod interface -->
+  <include file="$(find pacmod)/launch/pacmod.launch"/>
 
   <!-- obstacle_avoid -->
   <include file="$(find astar_planner)/launch/obstacle_avoid.launch"/>
