@@ -47,7 +47,7 @@ int main(int argc, char **argv)
 
   // Instantiate control node publisher
   pacmod_control_mode_pub   = nh_.advertise<std_msgs::Bool>("/as_rx/enable", 10, true);
-  aev_control_mode_pub      = nh_.advertise<std_msgs::Bool>("/aev_control_mode", 10, true);
+  aev_control_mode_pub      = nh_.advertise<std_msgs::Bool>("/aev/control_mode", 10, true);
 	pacmod_control_mode_pub.publish(msg);
 	aev_control_mode_pub.publish(msg);
 
