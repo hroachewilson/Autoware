@@ -3,8 +3,13 @@
 The purpose of this fork is to implement an interface, modelled on autonomoustuff's ssc_interface, that sends and receives can messages for throttle and steering wheel position. The Autoware Process Manager UI has been updated to include an AEV Interface button, and functionality has been added to the Auto Pilot button so that it toggles a control_mode message on the /aev/control_mode topic. The result is that steering and throttle can messages are enabled/disabled. 
 
 To achieve this, two activities have taken place. 
-1. The Dockerfile edited so as to install drivers for Kvaser Leaf Lite 2 can interface; and 
-2. AEV actuation packages have been created in ros/src/actuation/vehicles/packages/aev/ directory.
+1. The Dockerfile edited so as to install drivers for Kvaser Leaf Lite 2 can interface;
+2. AEV actuation packages have been created in ros/src/actuation/vehicles/packages/aev/ directory; and
+3. Submodules have been forked from autonomoustuff git repo for pacmod controller and pacmod_game_controller. AEV Vehicle has been added to pacmod with a view towards identifying a unique set of CAN bus messages for use with AEV platform. See submodule readme for details. Standard pacmod messages [described in wiki](http://wiki.ros.org/pacmod)
+
+TODO: Add support for arm/PX2 architecture using PX2 CAN interface and Autoware ARM image available [on dockerhub](https://hub.docker.com/r/autoware/autoware/)
+
+
 
 ## ----------------------------
 
