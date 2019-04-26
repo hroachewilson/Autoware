@@ -20,8 +20,8 @@
     <arg name="port" value="2268"/>
   </include>
 
-  <!-- Javad Delta 3 -->
-  <!-- <node pkg="javad_navsat_driver" type="gnss.sh" name="javad_driver"/> -->
+  <!-- Novatel GNSS -->
+  <include file="$(find novatel_gps_driver)/launch/tester_for_eth.launch"/>
 
   <!-- PointGrey Grasshopper3 -->
   <!--include file="$(find autoware_pointgrey_drivers)/scripts/grasshopper3.launch">

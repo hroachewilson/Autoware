@@ -10,3 +10,7 @@
 [submodule "ros/src/msgs/automotive_autonomy_msgs"]
 	path = ros/src/msgs/automotive_autonomy_msgs
 	url = https://github.com/astuff/automotive_autonomy_msgs.git
+[submodule "ros/src/sensing/drivers/gnss/packages/novatel_gps_driver"]
+	path = ros/src/sensing/drivers/gnss/packages/novatel_gps_driver
+	url = https://github.com/hroachewilson/novatel_gps_driver.git
+	branch = master
