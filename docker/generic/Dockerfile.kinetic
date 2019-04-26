@@ -52,7 +52,8 @@ RUN apt-get update && apt-get install -y \
 	ros-kinetic-can-msgs \
     ros-kinetic-dataspeed-can-msg-filters \
     ros-kinetic-dbw-mkz-can \
-    ros-kinetic-dataspeed-can-msgs 
+    ros-kinetic-dataspeed-can-msgs \
+    ros-kinetic-novatel-gps-driver
 
 RUN apt-get update && apt-get install -y libnlopt-dev freeglut3-dev qtbase5-dev libqt5opengl5-dev libssh2-1-dev libarmadillo-dev libpcap-dev gksu libgl1-mesa-dev libglew-dev python-wxgtk3.0 software-properties-common libmosquitto-dev libyaml-cpp-dev python-flask python-requests
 
