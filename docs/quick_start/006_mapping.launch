@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<launch>
+
+  <!-- setting path parameter -->
+  <arg name="get_height" value="true" />
+
+  <!-- Setup base_link to velodyne frame-->
+  <include file="$(find runtime_manager)/scripts/setup_tf.launch">
+    <arg name="x" value="-1.624" />
+    <arg name="y" value="0.0" />
+    <arg name="z" value="-1.64" />
+    <arg name="yaw" value="0.0" />
+    <arg name="pitch" value="0.0" />
+    <arg name="roll" value="0.0" />
+    <arg name="frame_id" value="/base_link" />
+    <arg name="child_frame_id" value="/vlp201" />
+    <arg name="period_in_ms" value="10"/>
+  </include>
+
+  <!-- Setup velodyne_rear to velodyne frame-->
+  <arg name="x_rear" default="1.408"/>
+  <arg name="y_rear" default="0.0"/>
+  <arg name="z_rear" default="0.0"/>
+  <arg name="yaw_rear" default="0.0"/>
+  <arg name="pitch_rear" default="0.0"/>
+  <arg name="roll_rear" default="0.0"/>
+  <arg name="frame_id" default="/vlp201"/>
+  <arg name="child_frame_id" default="/velodyne_rear"/>
+  <arg name="period_in_ms" default="10"/>
+
+  <node pkg="tf" type="static_transform_publisher" name="velodyne_rear_to_front" 
+    args="$(arg x_rear) $(arg y_rear) $(arg z_rear) $(arg yaw_rear) $(arg pitch_rear) 
+    $(arg roll_rear) $(arg frame_id) $(arg child_frame_id) $(arg period_in_ms)">
+  </node>
+
+
+  <!--node pkg="rosbag" type="play" name="player" args=" clock $(arg bag_dir)/$(arg file)">
+  </node-->
+
+
+</launch>

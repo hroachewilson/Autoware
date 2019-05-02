@@ -41,7 +41,6 @@
     <arg name="manager" value="$(arg manager)" />
     <arg name="max_range" value="$(arg max_range)"/>
     <arg name="min_range" value="$(arg min_range)"/>
-    <arg name="frame_id" value="$(arg frame_id)"/>
   </include>
 
   <!-- start laserscan nodelet -->
