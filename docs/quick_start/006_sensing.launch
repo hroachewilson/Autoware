@@ -1,13 +1,19 @@
 <?xml version="1.0"?>
 <launch>
 
+<!--####################################### ARGUMENTS ##########################################-->
+
+  <arg name="veh_frame_id" default="base_link" />
+  <arg name="use_socketcan" default="false" />
+  <arg name="use_kvaser" default="true" />
+
   <!-- calibration file path -->
   <arg name="velodyne_calib" default="$(find velodyne_pointcloud)/params/VLP16db.yaml"/>
 
   <!-- base_link to velodyne, tf parameters-->
   <arg name="x_front" value="-1.624" />
   <arg name="y_front" value="0.0" />
-  <arg name="z_front" value="-1.64" />
+  <arg name="z_front" value="1.64" />
   <arg name="yaw_front" value="0.0" />
   <arg name="pitch_front" value="0.0" />
   <arg name="roll_front" value="0.0" />
@@ -16,17 +22,48 @@
   <arg name="period_in_ms_front" value="10"/>
 
   <!-- velodyne to velodyne_rear, tf parameters-->
-  <arg name="x_rear" default="1.408"/>
+  <arg name="x_rear" default="-1.408"/>
   <arg name="y_rear" default="0.0"/>
   <arg name="z_rear" default="0.0"/>
-  <arg name="yaw_rear" default="0.0"/>
+  <arg name="yaw_rear" default="3.1415926535"/>
   <arg name="pitch_rear" default="0.0"/>
   <arg name="roll_rear" default="0.0"/>
   <arg name="frame_id_rear" default="/velodyne"/>
   <arg name="child_frame_id_rear" default="/velodyne_rear"/>
   <arg name="period_in_ms_rear" default="10"/>
 
-  <!-- VLP16 tf nodes-->
+  <!-- ESR arguments -->
+  <arg name="esr_frame_id" default="esr_1" />
+  <arg name="esr_upside_down" default="false" />
+  <arg name="esr_viz_mature_tracks_only" default="false" />
+  <arg name="esr_kvaser_hardware_id" default="048054" />
+  <arg name="esr_kvaser_circuit_id" default="0" />
+  <arg name="esr_socketcan_device" default="can0" />
+
+<!--##################################### LAUNCH CONFIG ########################################-->
+  <arg name="with_vlp16s" default="true" />
+  <arg name="with_esr" default="true" />
+  <arg name="with_srrs" default="false" />
+  <arg name="with_novatel" default="true" />
+  
+<!--##################################### TRANSFORMS ###########################################-->
+  <!-- x y z (in meters) and yaw pitch roll (in radians)
+  x: Positive forward along the vehicle
+  y: Positive to the left 
+  z: Upwards
+  Yaw: About z axis (non-zero for the SRRS)
+  Pitch: About Y axis (should be zero for SRRs but make sure)
+  Roll: About x axis(should be zero for the SRRs)
+
+ No transforms for the cameras
+ No yaw/pitch/roll for the ESR
+ x,y,z and yaw=0, pitch,roll for the VLP16s
+  -->
+ 
+  <!--ESR transforms-->
+  <node pkg="tf" type="static_transform_publisher" name="$(arg veh_frame_id)_to_$(arg esr_frame_id)" args="3.05 0 0.19 0 0 0 $(arg veh_frame_id) $(arg esr_frame_id) 100" /> 
+
+  <!-- VLP16 transforms-->
   <node pkg="tf" type="static_transform_publisher" name="base_link_to_localizer" 
     args="$(arg x_front) $(arg y_front) $(arg z_front) $(arg yaw_front) $(arg pitch_front) 
     $(arg roll_front) $(arg frame_id_front) $(arg child_frame_id_front) $(arg period_in_ms_front)">
@@ -36,18 +73,38 @@
     $(arg roll_rear) $(arg frame_id_rear) $(arg child_frame_id_rear) $(arg period_in_ms_rear)">
   </node>
 
-  <group ns="vlp_1">
+<!--###################################### NODE CONFIG #########################################-->
 
-      <!-- Init VLP-16 front -->
+<!--Delphi ESR-->
+  <group if="$(arg with_esr)" ns="$(arg esr_frame_id)">
+
+    <node pkg="kvaser_interface" type="kvaser_can_bridge" name="kvaser_can_bridge" if="$(arg use_kvaser)">
+      <param name="can_hardware_id" value="$(arg esr_kvaser_hardware_id)" />
+      <param name="can_circuit_id" value="$(arg esr_kvaser_circuit_id)" />
+      <param name="can_bit_rate" value="500000" />
+    </node> 
+    <node pkg="delphi_esr" type="delphi_esr_can" name="delphi_esr_can">
+      <param name="sensor_frame_id" value="$(arg esr_frame_id)"/>
+      <param name="sensor_upside_down" value="$(arg esr_upside_down)"/>
+
+      <!-- removes the noise of new tracks in rviz and only vizualizes the mature tracks --> 
+      <param name="viz_mature_tracks_only" value="$(arg esr_viz_mature_tracks_only)"/>
+    </node>    
+  </group>
+
+<!--VLP 16s-->
+  <group if="$(arg with_vlp16s)">
+    <!-- Init VLP-16 front -->
+    <group ns="vlp_1">
       <include file="$(find velodyne_pointcloud)/launch/VLP16_points.launch">
         <arg name="calibration" value="$(arg velodyne_calib)"/>
         <arg name="device_ip" value="192.168.1.201"/>
         <arg name="frame_id" value="velodyne"/>
         <arg name="port" value="2368"/>
       </include>
-  </group>
+    </group>
 
-  <group ns="vlp_2">
+    <group ns="vlp_2">
       <!-- Init VLP-16 rear -->
       <include file="$(find velodyne_pointcloud)/launch/VLP16_points.launch">
         <arg name="calibration" value="$(arg velodyne_calib)"/>
@@ -55,17 +112,18 @@
         <arg name="frame_id" value="velodyne_rear"/>
         <arg name="port" value="2268"/>
       </include>
+    </group>
+
+    <!-- Merge front and rear VLP16s -->
+    <include file="$(find points_preprocessor)/launch/points_concat_filter.launch">
+      <arg name="input_topics" value="[/vlp_1/velodyne_points,/vlp_2/velodyne_points]"/>
+      <arg name="output_topic" value="/points_raw"/>
+      <arg name="output_frame_id" value="velodyne"/>
+    </include>
   </group>
 
-  <!-- Merge front and rear VLP16s -->
-  <include file="$(find points_preprocessor)/launch/points_concat_filter.launch">
-    <arg name="input_topics" value="[/vlp_1/velodyne_points,/vlp_2/velodyne_points]"/>
-    <arg name="output_topic" value="/points_raw"/>
-    <arg name="output_frame_id" value="velodyne"/>
-  </include>
-
-
   <!-- Novatel GNSS -->
-  <!--include file="$(find novatel_gps_driver)/launch/tester_for_eth.launch"/-->
-
+  <group if="$(arg with_novatel)" ns="novatel">
+    <include file="$(find novatel_gps_driver)/launch/tester_for_eth.launch" />
+  </group>
 </launch>

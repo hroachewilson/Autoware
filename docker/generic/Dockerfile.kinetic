@@ -4,14 +4,15 @@ MAINTAINER Yuki Iida <yuki.iida@tier4.jp>
 # Install kvaser can interface drivers
 RUN apt-get update && apt-get install -y linux-headers-`uname -r`
 RUN apt-get update && apt-get install -y software-properties-common
-RUN apt-add-repository ppa:jwhitleyastuff/linuxcan-dkms
 RUN sh -c 'echo "deb [ arch=amd64 ] http://packages.dataspeedinc.com/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-dataspeed-public.list'
+RUN sh -c 'echo "deb [trusted=yes] https://s3.amazonaws.com/autonomoustuff-repo/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/autonomoustuff-public.list'
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys FF6D3CDA
+RUN apt-add-repository ppa:jwhitleyastuff/linuxcan-dkms
 RUN apt-get update
 
 # Develop
 RUN apt-get update && apt-get install -y \
-        wget netcat curl git tar cmake cmake-curses-gui build-essential \
+        wget netcat curl git tar cmake cmake-curses-gui build-essential apt-transport-https \
         libboost-all-dev \
         libflann-dev \
         libgsl0-dev \
@@ -53,7 +54,8 @@ RUN apt-get update && apt-get install -y \
     ros-kinetic-dataspeed-can-msg-filters \
     ros-kinetic-dbw-mkz-can \
     ros-kinetic-dataspeed-can-msgs \
-    ros-kinetic-novatel-gps-driver
+    ros-kinetic-novatel-gps-driver \
+    ros-kinetic-delphi-esr
 
 RUN apt-get update && apt-get install -y libnlopt-dev freeglut3-dev qtbase5-dev libqt5opengl5-dev libssh2-1-dev libarmadillo-dev libpcap-dev gksu libgl1-mesa-dev libglew-dev python-wxgtk3.0 software-properties-common libmosquitto-dev libyaml-cpp-dev python-flask python-requests
 
