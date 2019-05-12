@@ -5,8 +5,10 @@
 
   <arg name="veh_frame_id" default="base_link" />
 
-  <!-- calibration file path -->
+  <!-- velodyne common parameters -->
   <arg name="velodyne_calib" default="$(find velodyne_pointcloud)/params/VLP16db.yaml"/>
+  <arg name="tf_period_in_ms" value="10"/>
+  <arg name="vlp_min_range" value="1.81"/>
 
   <!-- base_link to velodyne, tf parameters-->
   <arg name="vlp1_x" value="1.624" />
@@ -17,13 +19,13 @@
   <arg name="vlp1_roll" value="0.0" />
   <arg name="vlp1_parent_frame_id" value="$(arg veh_frame_id)" />
   <arg name="vlp1_frame_id" value="velodyne" />
-  <arg name="period_in_ms_front" value="10"/>
+  
 
   <!-- velodyne to velodyne_rear, tf parameters-->
   <arg name="vlp2_x" default="-1.408"/>
   <arg name="vlp2_y" default="0.0"/>
   <arg name="vlp2_z" default="0.0"/>
-  <arg name="vlp2_yaw" default="3.1415926535"/>
+  <arg name="vlp2_yaw" default="3.125"/>
   <arg name="vlp2_pitch" default="0.0"/>
   <arg name="vlp2_roll" default="0.0"/>
   <arg name="vlp2_parent_frame_id" default="velodyne"/>
@@ -33,8 +35,8 @@
   <!-- ESR arguments -->
   <arg name="esr1_parent_frame_id" value="$(arg veh_frame_id)" />
   <arg name="esr1_frame_id" default="esr_1" />
-  <arg name="esr1_upside_down" default="false" />
-  <arg name="esr1_viz_mature_tracks_only" default="false" />
+  <arg name="esr1_upside_down" default="true" />
+  <arg name="esr1_viz_mature_tracks_only" default="true" />
   <arg name="esr1_kvaser_hardware_id" default="048054" />
   <arg name="esr1_kvaser_circuit_id" default="0" />
   <arg name="esr1_x" default="2.781" />
@@ -89,7 +91,7 @@
         name="$(arg esr1_parent_frame_id)_to_$(arg esr1_frame_id)" 
         args="$(arg esr1_x) $(arg esr1_y) $(arg esr1_z) 
               $(arg esr1_yaw) $(arg esr1_pitch) $(arg esr1_roll)
-              $(arg esr1_parent_frame_id) $(arg esr1_frame_id) 100" /> 
+              $(arg esr1_parent_frame_id) $(arg esr1_frame_id) $(arg tf_period_in_ms)" /> 
 
   <!-- VLP16 transforms-->
   <node pkg="tf" 
@@ -97,14 +99,14 @@
         name="$(arg vlp1_parent_frame_id)_to_$(arg vlp1_frame_id)" 
         args="$(arg vlp1_x) $(arg vlp1_y) $(arg vlp1_z) 
               $(arg vlp1_yaw) $(arg vlp1_pitch) $(arg vlp1_roll)
-              $(arg vlp1_parent_frame_id) $(arg vlp1_frame_id) $(arg period_in_ms_front)">
+              $(arg vlp1_parent_frame_id) $(arg vlp1_frame_id) $(arg tf_period_in_ms)">
   </node>
   <node pkg="tf" 
         type="static_transform_publisher" 
         name="$(arg vlp2_parent_frame_id)_to_$(arg vlp2_frame_id)" 
         args="$(arg vlp2_x) $(arg vlp2_y) $(arg vlp2_z) 
               $(arg vlp2_yaw) $(arg vlp2_pitch) $(arg vlp2_roll)
-              $(arg vlp2_parent_frame_id) $(arg vlp2_frame_id) $(arg period_in_ms_rear)">
+              $(arg vlp2_parent_frame_id) $(arg vlp2_frame_id) $(arg tf_period_in_ms)">
   </node>
 
   <!--IMU1 transforms-->
@@ -139,20 +141,22 @@
     <!-- Init VLP-16 front -->
     <group ns="vlp_1">
       <include file="$(find velodyne_pointcloud)/launch/VLP16_points.launch">
-        <arg name="calibration" value="$(arg velodyne_calib)"/>
-        <arg name="device_ip" value="192.168.1.201"/>
-        <arg name="frame_id" value="velodyne"/>
-        <arg name="port" value="2368"/>
+        <arg name="calibration" value="$(arg velodyne_calib)" />
+        <arg name="device_ip" value="192.168.1.201" />
+        <arg name="frame_id" value="velodyne" />
+        <arg name="min_range" value="$(arg vlp_min_range)" />
+        <arg name="port" value="2368" />
       </include>
     </group>
 
     <group ns="vlp_2">
       <!-- Init VLP-16 rear -->
       <include file="$(find velodyne_pointcloud)/launch/VLP16_points.launch">
-        <arg name="calibration" value="$(arg velodyne_calib)"/>
-        <arg name="device_ip" value="192.168.2.201"/>
-        <arg name="frame_id" value="velodyne_rear"/>
-        <arg name="port" value="2268"/>
+        <arg name="calibration" value="$(arg velodyne_calib)" />
+        <arg name="device_ip" value="192.168.2.201" />
+        <arg name="frame_id" value="velodyne_rear" />
+        <arg name="min_range" value="$(arg vlp_min_range)" />
+        <arg name="port" value="2268" />
       </include>
     </group>
 
