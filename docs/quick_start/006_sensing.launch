@@ -4,48 +4,71 @@
 <!--####################################### ARGUMENTS ##########################################-->
 
   <arg name="veh_frame_id" default="base_link" />
-  <arg name="use_socketcan" default="false" />
-  <arg name="use_kvaser" default="true" />
 
   <!-- calibration file path -->
   <arg name="velodyne_calib" default="$(find velodyne_pointcloud)/params/VLP16db.yaml"/>
 
   <!-- base_link to velodyne, tf parameters-->
-  <arg name="x_front" value="-1.624" />
-  <arg name="y_front" value="0.0" />
-  <arg name="z_front" value="1.64" />
-  <arg name="yaw_front" value="0.0" />
-  <arg name="pitch_front" value="0.0" />
-  <arg name="roll_front" value="0.0" />
-  <arg name="frame_id_front" value="/base_link" />
-  <arg name="child_frame_id_front" value="/velodyne" />
+  <arg name="vlp1_x" value="1.624" />
+  <arg name="vlp1_y" value="0.0" />
+  <arg name="vlp1_z" value="1.64" />
+  <arg name="vlp1_yaw" value="0.0" />
+  <arg name="vlp1_pitch" value="0.0" />
+  <arg name="vlp1_roll" value="0.0" />
+  <arg name="vlp1_parent_frame_id" value="$(arg veh_frame_id)" />
+  <arg name="vlp1_frame_id" value="velodyne" />
   <arg name="period_in_ms_front" value="10"/>
 
   <!-- velodyne to velodyne_rear, tf parameters-->
-  <arg name="x_rear" default="-1.408"/>
-  <arg name="y_rear" default="0.0"/>
-  <arg name="z_rear" default="0.0"/>
-  <arg name="yaw_rear" default="3.1415926535"/>
-  <arg name="pitch_rear" default="0.0"/>
-  <arg name="roll_rear" default="0.0"/>
-  <arg name="frame_id_rear" default="/velodyne"/>
-  <arg name="child_frame_id_rear" default="/velodyne_rear"/>
+  <arg name="vlp2_x" default="-1.408"/>
+  <arg name="vlp2_y" default="0.0"/>
+  <arg name="vlp2_z" default="0.0"/>
+  <arg name="vlp2_yaw" default="3.1415926535"/>
+  <arg name="vlp2_pitch" default="0.0"/>
+  <arg name="vlp2_roll" default="0.0"/>
+  <arg name="vlp2_parent_frame_id" default="velodyne"/>
+  <arg name="vlp2_frame_id" default="velodyne_rear"/>
   <arg name="period_in_ms_rear" default="10"/>
 
   <!-- ESR arguments -->
-  <arg name="esr_frame_id" default="esr_1" />
-  <arg name="esr_upside_down" default="false" />
-  <arg name="esr_viz_mature_tracks_only" default="false" />
-  <arg name="esr_kvaser_hardware_id" default="048054" />
-  <arg name="esr_kvaser_circuit_id" default="0" />
-  <arg name="esr_socketcan_device" default="can0" />
+  <arg name="esr1_parent_frame_id" value="$(arg veh_frame_id)" />
+  <arg name="esr1_frame_id" default="esr_1" />
+  <arg name="esr1_upside_down" default="false" />
+  <arg name="esr1_viz_mature_tracks_only" default="false" />
+  <arg name="esr1_kvaser_hardware_id" default="048054" />
+  <arg name="esr1_kvaser_circuit_id" default="0" />
+  <arg name="esr1_x" default="2.781" />
+  <arg name="esr1_y" default="0" />
+  <arg name="esr1_z" default="-0.01" />
+  <arg name="esr1_yaw" default="0" />
+  <arg name="esr1_pitch" default="0" />
+  <arg name="esr1_roll" default="0" />
+
+  <!-- IMU arguments -->
+  <arg name="imu1_parent_frame_id" value="$(arg veh_frame_id)" />
+  <arg name="imu1_frame_id" default="imu" />
+  <arg name="imu1_x" default="0" />
+  <arg name="imu1_y" default="0" />
+  <arg name="imu1_z" default="0" />
+  <arg name="imu1_yaw" default="0" />
+  <arg name="imu1_pitch" default="0" />
+  <arg name="imu1_roll" default="0" />
+
+  <!--Novatel Propak6/ Powerpak7-->
+  <arg name="novatel_connection_type" default="tcp"/> <!--Change this to "Serial" if needed-->
+  <arg name="novatel_device" default="192.168.74.10:3000"/> <!--Change this to a USB device like /dev/ttyUSBX for Serial-->
+  <arg name="novatel_imu_rate" default="100"/>
+  <arg name="novatel_imu_frame_id" default="/novatel/imu"/>
+  <arg name="novatel_gps_frame_id" default="/novatel/gps"/>
+  <arg name="novatel_verbose" default="false"/>
+
 
 <!--##################################### LAUNCH CONFIG ########################################-->
   <arg name="with_vlp16s" default="true" />
   <arg name="with_esr" default="true" />
-  <arg name="with_srrs" default="false" />
   <arg name="with_novatel" default="true" />
   
+
 <!--##################################### TRANSFORMS ###########################################-->
   <!-- x y z (in meters) and yaw pitch roll (in radians)
   x: Positive forward along the vehicle
@@ -61,38 +84,57 @@
   -->
  
   <!--ESR transforms-->
-  <node pkg="tf" type="static_transform_publisher" name="$(arg veh_frame_id)_to_$(arg esr_frame_id)" args="3.05 0 0.19 0 0 0 $(arg veh_frame_id) $(arg esr_frame_id) 100" /> 
+  <node pkg="tf" 
+        type="static_transform_publisher" 
+        name="$(arg esr1_parent_frame_id)_to_$(arg esr1_frame_id)" 
+        args="$(arg esr1_x) $(arg esr1_y) $(arg esr1_z) 
+              $(arg esr1_yaw) $(arg esr1_pitch) $(arg esr1_roll)
+              $(arg esr1_parent_frame_id) $(arg esr1_frame_id) 100" /> 
 
   <!-- VLP16 transforms-->
-  <node pkg="tf" type="static_transform_publisher" name="base_link_to_localizer" 
-    args="$(arg x_front) $(arg y_front) $(arg z_front) $(arg yaw_front) $(arg pitch_front) 
-    $(arg roll_front) $(arg frame_id_front) $(arg child_frame_id_front) $(arg period_in_ms_front)">
+  <node pkg="tf" 
+        type="static_transform_publisher"
+        name="$(arg vlp1_parent_frame_id)_to_$(arg vlp1_frame_id)" 
+        args="$(arg vlp1_x) $(arg vlp1_y) $(arg vlp1_z) 
+              $(arg vlp1_yaw) $(arg vlp1_pitch) $(arg vlp1_roll)
+              $(arg vlp1_parent_frame_id) $(arg vlp1_frame_id) $(arg period_in_ms_front)">
   </node>
-  <node pkg="tf" type="static_transform_publisher" name="velodyne_rear_to_front" 
-    args="$(arg x_rear) $(arg y_rear) $(arg z_rear) $(arg yaw_rear) $(arg pitch_rear) 
-    $(arg roll_rear) $(arg frame_id_rear) $(arg child_frame_id_rear) $(arg period_in_ms_rear)">
+  <node pkg="tf" 
+        type="static_transform_publisher" 
+        name="$(arg vlp2_parent_frame_id)_to_$(arg vlp2_frame_id)" 
+        args="$(arg vlp2_x) $(arg vlp2_y) $(arg vlp2_z) 
+              $(arg vlp2_yaw) $(arg vlp2_pitch) $(arg vlp2_roll)
+              $(arg vlp2_parent_frame_id) $(arg vlp2_frame_id) $(arg period_in_ms_rear)">
   </node>
+
+  <!--IMU1 transforms-->
+  <node pkg="tf" 
+        type="static_transform_publisher" 
+        name="$(arg imu1_parent_frame_id)_to_$(arg imu1_frame_id)" 
+        args="$(arg imu1_x) $(arg imu1_y) $(arg imu1_z) 
+              $(arg imu1_yaw) $(arg imu1_pitch) $(arg imu1_roll)
+              $(arg imu1_parent_frame_id) $(arg imu1_frame_id) 100" /> 
 
 <!--###################################### NODE CONFIG #########################################-->
 
 <!--Delphi ESR-->
-  <group if="$(arg with_esr)" ns="$(arg esr_frame_id)">
+  <group if="$(arg with_esr)" ns="$(arg esr1_frame_id)">
 
-    <node pkg="kvaser_interface" type="kvaser_can_bridge" name="kvaser_can_bridge" if="$(arg use_kvaser)">
-      <param name="can_hardware_id" value="$(arg esr_kvaser_hardware_id)" />
-      <param name="can_circuit_id" value="$(arg esr_kvaser_circuit_id)" />
+    <node pkg="kvaser_interface" type="kvaser_can_bridge" name="kvaser_can_bridge">
+      <param name="can_hardware_id" value="$(arg esr1_kvaser_hardware_id)" />
+      <param name="can_circuit_id" value="$(arg esr1_kvaser_circuit_id)" />
       <param name="can_bit_rate" value="500000" />
     </node> 
     <node pkg="delphi_esr" type="delphi_esr_can" name="delphi_esr_can">
-      <param name="sensor_frame_id" value="$(arg esr_frame_id)"/>
-      <param name="sensor_upside_down" value="$(arg esr_upside_down)"/>
+      <param name="sensor_frame_id" value="$(arg esr1_frame_id)"/>
+      <param name="sensor_upside_down" value="$(arg esr1_upside_down)"/>
 
       <!-- removes the noise of new tracks in rviz and only vizualizes the mature tracks --> 
-      <param name="viz_mature_tracks_only" value="$(arg esr_viz_mature_tracks_only)"/>
+      <param name="viz_mature_tracks_only" value="$(arg esr1_viz_mature_tracks_only)"/>
     </node>    
   </group>
 
-<!--VLP 16s-->
+  <!--VLP 16s-->
   <group if="$(arg with_vlp16s)">
     <!-- Init VLP-16 front -->
     <group ns="vlp_1">
@@ -122,8 +164,23 @@
     </include>
   </group>
 
-  <!-- Novatel GNSS -->
-  <group if="$(arg with_novatel)" ns="novatel">
-    <include file="$(find novatel_gps_driver)/launch/tester_for_eth.launch" />
+<!--Novatel Powerpak 7-->
+  <group ns="novatel">
+    <node name="novatel"
+          pkg="nodelet" type="nodelet"
+          args="standalone novatel_gps_driver/novatel_gps_nodelet">
+      <rosparam>
+        verbose: true
+        connection_type: tcp
+        device: 192.168.74.10
+        frame_id: /gps
+        use_binary_messages: true
+        publish_novatel_positions: true
+        publish_imu_messages: true
+        publish_imu: true
+        publish_novatel_velocity: true
+        imu_frame_id: /imu
+      </rosparam>
+    </node>
   </group>
 </launch>
