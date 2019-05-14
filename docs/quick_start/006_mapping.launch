@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<launch>
+
+<!--####################################### ARGUMENTS ##########################################-->
+
+  <!-- Merge front and rear VLP16s -->
+  <include file="$(find points_preprocessor)/launch/points_concat_filter.launch">
+    <arg name="input_topics" value="[/vlp_1/velodyne_points,/vlp_2/velodyne_points]"/>
+    <arg name="output_topic" value="/points_raw"/>
+    <arg name="output_frame_id" value="velodyne"/>
+  </include>
+
+ <!-- points downsampler -->
+  <include file="$(find points_downsampler)/launch/points_downsample.launch" />
+
+  <!-- nmea2tfpose -->
+  <include file="$(find gnss_localizer)/launch/nmea2tfpose.launch"/>
+
+  <node pkg="map_tf_generator" type="map_tf_generator" name="world_to_map" />
+
+</launch>
+

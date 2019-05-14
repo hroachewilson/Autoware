@@ -11,13 +11,22 @@ find_package(catkin REQUIRED COMPONENTS
         tf
         )
 
-catkin_package()
+catkin_package(
+	INCLUDE_DIRS include
+)
 
 SET(CMAKE_CXX_FLAGS "-O2 -g -Wall ${CMAKE_CXX_FLAGS}")
 
 include_directories(
         ${catkin_INCLUDE_DIRS}
 )
+
+add_executable(fix2utm
+        nodes/fix2utm/fix2utm.cpp
+        )
+target_include_directories(fix2utm PRIVATE ${catkin_INCLUDE_DIRS})
+target_link_libraries(fix2utm ${catkin_LIBRARIES})
+add_dependencies(fix2utm ${catkin_EXPORTED_TARGETS})
 
 add_executable(fix2tfpose
         nodes/fix2tfpose/fix2tfpose.cpp
@@ -34,7 +43,7 @@ target_include_directories(nmea2tfpose PRIVATE nodes/nmea2tfpose ${catkin_INCLUD
 target_link_libraries(nmea2tfpose ${catkin_LIBRARIES})
 add_dependencies(nmea2tfpose ${catkin_EXPORTED_TARGETS})
 
-install(TARGETS nmea2tfpose fix2tfpose
+install(TARGETS nmea2tfpose fix2tfpose fix2utm
         ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})

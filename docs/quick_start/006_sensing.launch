@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <launch>
 
-<!--####################################### ARGUMENTS ##########################################-->
 
+<!--####################################### ARGUMENTS ##########################################-->
   <arg name="veh_frame_id" default="base_link" />
 
   <!-- velodyne common parameters -->
@@ -117,8 +117,8 @@
               $(arg imu1_yaw) $(arg imu1_pitch) $(arg imu1_roll)
               $(arg imu1_parent_frame_id) $(arg imu1_frame_id) 100" /> 
 
-<!--###################################### NODE CONFIG #########################################-->
 
+<!--###################################### SENSOR NODES ########################################-->
 <!--Delphi ESR-->
   <group if="$(arg with_esr)" ns="$(arg esr1_frame_id)">
 
@@ -159,17 +159,9 @@
         <arg name="port" value="2268" />
       </include>
     </group>
-
-    <!-- Merge front and rear VLP16s -->
-    <include file="$(find points_preprocessor)/launch/points_concat_filter.launch">
-      <arg name="input_topics" value="[/vlp_1/velodyne_points,/vlp_2/velodyne_points]"/>
-      <arg name="output_topic" value="/points_raw"/>
-      <arg name="output_frame_id" value="velodyne"/>
-    </include>
   </group>
-
-<!--Novatel Powerpak 7-->
-  <group ns="novatel">
+  <!--Novatel Powerpak 7-->
+  <group if="$(arg with_novatel)">
     <node name="novatel"
           pkg="nodelet" type="nodelet"
           args="standalone novatel_gps_driver/novatel_gps_nodelet">
@@ -187,4 +179,16 @@
       </rosparam>
     </node>
   </group>
+
+
+<!--#################################### PROCESSING NODES #######################################-->
+  <!-- Merge front and rear VLP16s -->
+  <group if="$(arg with_vlp16s)">   
+    <include file="$(find points_preprocessor)/launch/points_concat_filter.launch">
+      <arg name="input_topics" value="[/vlp_1/velodyne_points,/vlp_2/velodyne_points]"/>
+      <arg name="output_topic" value="/points_raw"/>
+      <arg name="output_frame_id" value="velodyne"/>
+    </include>
+  </group>
+
 </launch>
