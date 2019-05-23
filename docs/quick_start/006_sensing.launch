@@ -14,23 +14,21 @@
   <arg name="vlp1_x" value="1.624" />
   <arg name="vlp1_y" value="0.0" />
   <arg name="vlp1_z" value="1.64" />
-  <arg name="vlp1_yaw" value="0.0" />
+  <arg name="vlp1_yaw" value="-0.045" />
   <arg name="vlp1_pitch" value="0.0" />
   <arg name="vlp1_roll" value="0.0" />
   <arg name="vlp1_parent_frame_id" value="$(arg veh_frame_id)" />
   <arg name="vlp1_frame_id" value="velodyne" />
-  
 
   <!-- velodyne to velodyne_rear, tf parameters-->
-  <arg name="vlp2_x" default="-1.408"/>
-  <arg name="vlp2_y" default="0.0"/>
+  <arg name="vlp2_x" default="-1.4775"/>
+  <arg name="vlp2_y" default="-0.06647"/>
   <arg name="vlp2_z" default="0.0"/>
-  <arg name="vlp2_yaw" default="3.125"/>
+  <arg name="vlp2_yaw" default="0.0"/>
   <arg name="vlp2_pitch" default="0.0"/>
   <arg name="vlp2_roll" default="0.0"/>
   <arg name="vlp2_parent_frame_id" default="velodyne"/>
   <arg name="vlp2_frame_id" default="velodyne_rear"/>
-  <arg name="period_in_ms_rear" default="10"/>
 
   <!-- ESR arguments -->
   <arg name="esr1_parent_frame_id" value="$(arg veh_frame_id)" />
@@ -63,13 +61,40 @@
   <arg name="novatel_imu_frame_id" default="/novatel/imu"/>
   <arg name="novatel_gps_frame_id" default="/novatel/gps"/>
   <arg name="novatel_verbose" default="false"/>
+  
+  <!--GNSS origin frame data. UTM coords selected from metec facility origin-->
+  <arg name="fix" default="novatel/fix"/>
+  <arg name="utm_east" default="350565.27"/>
+  <arg name="utm_north" default="5813723.57"/>
+  <arg name="utm_alt" default="110.0"/>
+  <arg name="map_offset_x" default="94" />
+  <arg name="map_offset_y" default="139" />
+  <arg name="map_offset_rotation" default="2.0" />
 
+  <!-- Map origin points in lat lon and utm coordinates stored here
+
+  Point 1: Outside croydon office driveway
+    Lat:          -37.814275
+    Lon:          145.292797
+    Alt:          126.0
+    UTM Easting:  349729.34
+    UTM Northing: 5813418.41
+    UTM Zone:     55H
+
+  Point 2: Metec Driver Training Facility crosswalk pole
+    Lat:          -37.811663
+    Lon:          145.302353
+    Alt:          110.0
+    UTM Easting:  350565.27
+    UTM Northing: 5813723.57
+    UTM Zone:     55H
+  -->
 
 <!--##################################### LAUNCH CONFIG ########################################-->
   <arg name="with_vlp16s" default="true" />
   <arg name="with_esr" default="true" />
   <arg name="with_novatel" default="true" />
-  
+  <arg name="with_gnss_localisation" default="true" />
 
 <!--##################################### TRANSFORMS ###########################################-->
   <!-- x y z (in meters) and yaw pitch roll (in radians)
@@ -83,7 +108,8 @@
  No transforms for the cameras
  No yaw/pitch/roll for the ESR
  x,y,z and yaw=0, pitch,roll for the VLP16s
-  -->
+
+-->
  
   <!--ESR transforms-->
   <node pkg="tf" 
@@ -117,6 +143,12 @@
               $(arg imu1_yaw) $(arg imu1_pitch) $(arg imu1_roll)
               $(arg imu1_parent_frame_id) $(arg imu1_frame_id) 100" /> 
 
+  <!--Map transforms-->
+  <node pkg="tf"  type="static_transform_publisher" name="world_to_map" 
+        args="$(arg map_offset_x) -$(arg map_offset_y) 0 0 0 0 /world /map $(arg tf_period_in_ms)" />
+
+  <node pkg="tf"  type="static_transform_publisher" name="map_to_mobility" 
+        args="0 0 0 0 0 0 /map /mobility $(arg tf_period_in_ms)" />
 
 <!--###################################### SENSOR NODES ########################################-->
 <!--Delphi ESR-->
@@ -160,8 +192,9 @@
       </include>
     </group>
   </group>
+
   <!--Novatel Powerpak 7-->
-  <group if="$(arg with_novatel)">
+  <group ns="novatel" if="$(arg with_novatel)">
     <node name="novatel"
           pkg="nodelet" type="nodelet"
           args="standalone novatel_gps_driver/novatel_gps_nodelet">

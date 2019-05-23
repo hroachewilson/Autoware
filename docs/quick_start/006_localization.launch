@@ -1,31 +1,70 @@
+<?xml version="1.0"?>
 <launch>
+
+  <!-- Map origin points in lat lon and utm coordinates stored here
+
+  Point 1: Outside croydon office driveway
+    Lat:          -37.814275
+    Lon:          145.292797
+    Alt:          126.0
+    UTM Easting:  349729.34
+    UTM Northing: 5813418.41
+    UTM Zone:     55H
+
+  Point 2: Metec Driver Training Facility crosswalk pole
+    Lat:          -37.811663
+    Lon:          145.302353
+    Alt:          110.0
+    UTM Easting:  350565.27
+    UTM Northing: 5813723.57
+    UTM Zone:     55H
+  -->
+
+  
+  <!-- GNSS & general use variables-->
+  <arg name="utm_east" default="350565.27"/>
+  <arg name="utm_north" default="5813723.57"/>
+  <arg name="map_offset_x" default="-94" />
+  <arg name="map_offset_y" default="139" />
+  <arg name="map_offset_rotation" default="2.0" />
 
   <!-- setting path parameter -->
   <arg name="get_height" value="true" />
 
-  <!-- Setup -->
+  <!-- base_link to localizer setup -->
   <include file="$(find runtime_manager)/scripts/setup_tf.launch">
-    <arg name="x" value="1.2" />
+    <arg name="x" value="1.624" />
     <arg name="y" value="0.0" />
-    <arg name="z" value="2.0" />
-    <arg name="yaw" value="0.0" />
+    <arg name="z" value="1.64" />
+    <arg name="yaw" value="-0.045" />
     <arg name="pitch" value="0.0" />
     <arg name="roll" value="0.0" />
     <arg name="frame_id" value="/base_link" />
     <arg name="child_frame_id" value="/velodyne" />
     <arg name="period_in_ms" value="10"/>
   </include>
-  <include file="$(find model_publisher)/launch/vehicle_model.launch" />
+
+  <!-- vehicle model setup -->
+  <include file="$(find model_publisher)/launch/006_model.launch" />
 
   <!-- points downsampler -->
   <include file="$(find points_downsampler)/launch/points_downsample.launch" />
 
-  <!-- nmea2tfpose -->
-  <include file="$(find gnss_localizer)/launch/nmea2tfpose.launch"/>
+  <!-- fix2utm -->
+  <include file="$(find gnss_localizer)/launch/fix2utm.launch">
+    <arg name="origin_easting" value="$(arg utm_east)" />
+    <arg name="origin_northing" value="$(arg utm_north)" />
+    <arg name="fix" value="novatel/fix"/>
+    <arg name="map_offset_x" default="$(arg map_offset_x)" />
+    <arg name="map_offset_y" default="$(arg map_offset_y)" />
+    <arg name="rotation_offset" default="$(arg map_offset_rotation)" />
+  </include>
 
   <!-- ndt_matching -->
   <include file="$(find lidar_localizer)/launch/ndt_matching.launch">
     <arg name="get_height" value="$(arg get_height)" />
+    <arg name="use_gnss" value="0" />
   </include>
 
 </launch>
+

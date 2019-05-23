@@ -2,9 +2,19 @@
 <launch>
 
   <arg name="fix" default="novatel/fix"/>
+  <arg name="origin_easting" default="350565.27" />
+  <arg name="origin_northing" default="5813723.57" />
+  <arg name="map_offset_x" default="-94" />
+  <arg name="map_offset_y" default="139" />
+  <arg name="rotation_offset" default="2.0" />
 
   <node pkg="gnss_localizer" type="fix2utm" name="fix2utm" output="log">
     <param name="fix" value="$(arg fix)"/>
+    <param name="origin_easting" value="$(arg origin_easting)"/>
+    <param name="origin_northing" value="$(arg origin_northing)"/>
+    <param name="map_offset_x" value="$(arg map_offset_x)"/>
+    <param name="map_offset_y" value="$(arg map_offset_y)"/>
+    <param name="rotation_offset" value="$(arg rotation_offset)"/>
   </node>
 
 </launch>
