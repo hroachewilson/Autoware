@@ -1,6 +1,3 @@
-[submodule "ros/src/actuation/vehicles/packages/as/pacmod_game_control"]
-	path = ros/src/actuation/vehicles/packages/as/pacmod_game_control
-	url = https://github.com/astuff/pacmod_game_control.git
 [submodule "ros/src/actuation/vehicles/packages/as/pacmod"]
 	path = ros/src/actuation/vehicles/packages/as/pacmod
 	url = https://github.com/hroachewilson/pacmod.git
