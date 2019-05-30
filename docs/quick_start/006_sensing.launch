@@ -30,6 +30,16 @@
   <arg name="vlp2_parent_frame_id" default="velodyne"/>
   <arg name="vlp2_frame_id" default="velodyne_rear"/>
 
+  <!-- base_link to camera, tf parameters-->
+  <arg name="cam_x" default="1.693"/>
+  <arg name="cam_y" default="0.0"/>
+  <arg name="cam_z" default="1.588"/>
+  <arg name="cam_yaw" default="0.0"/>
+  <arg name="cam_pitch" default="0.0"/>
+  <arg name="cam_roll" default="0.0"/>
+  <arg name="cam_parent_frame_id" default="$(arg veh_frame_id)"/>
+  <arg name="cam_frame_id" default="camera"/>
+
   <!-- ESR arguments -->
   <arg name="esr1_parent_frame_id" value="$(arg veh_frame_id)" />
   <arg name="esr1_frame_id" default="esr_1" />
@@ -70,6 +80,9 @@
   <arg name="map_offset_x" default="94" />
   <arg name="map_offset_y" default="139" />
   <arg name="map_offset_rotation" default="2.0" />
+
+  <!--Leopard Imaging UVC camera parameters-->
+  <arg name="camera_calib" default="$(env HOME)/.autoware/metec/calibration/dummy-calibration.yml"/>
 
   <!-- Map origin points in lat lon and utm coordinates stored here
 
@@ -133,6 +146,15 @@
         args="$(arg vlp2_x) $(arg vlp2_y) $(arg vlp2_z) 
               $(arg vlp2_yaw) $(arg vlp2_pitch) $(arg vlp2_roll)
               $(arg vlp2_parent_frame_id) $(arg vlp2_frame_id) $(arg tf_period_in_ms)">
+  </node>
+
+  <!--Camera transform -->
+  <node pkg="tf" 
+        type="static_transform_publisher"
+        name="$(arg cam_parent_frame_id)_to_$(arg cam_frame_id)" 
+        args="$(arg cam_x) $(arg cam_y) $(arg cam_z) 
+              $(arg cam_yaw) $(arg cam_pitch) $(arg cam_roll)
+              $(arg cam_parent_frame_id) $(arg cam_frame_id) $(arg tf_period_in_ms)">
   </node>
 
   <!--IMU1 transforms-->
@@ -213,6 +235,12 @@
     </node>
   </group>
 
+  <!-- Leopard Imaging libuvc Camera -->
+  <group ns="camera">
+    <include file="$(find libuvc_camera)/launch/libuvc_camera.launch">
+      <arg name="camera_info_url" value="file://$(arg camera_calib)"/>
+    </include>
+  </group>
 
 <!--#################################### PROCESSING NODES #######################################-->
   <!-- Merge front and rear VLP16s -->

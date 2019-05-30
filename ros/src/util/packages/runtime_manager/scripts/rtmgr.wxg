@@ -301,7 +301,7 @@
                                                     <events>
                                                         <handler event="EVT_TOGGLEBUTTON">OnLaunchKill</handler>
                                                     </events>
-                                                    <label>AEV Interface</label>
+                                                    <label>Drive By Wire</label>
                                                 </object>
                                             </object>
                                             <object class="sizeritem">
@@ -1254,7 +1254,7 @@
                                                     <events>
                                                         <handler event="EVT_TOGGLEBUTTON">OnLaunchKill</handler>
                                                     </events>
-                                                    <label>AEV Interface</label>
+                                                    <label>Drive By Wire</label>
                                                 </object>
                                             </object>
                                             <object class="sizeritem">
