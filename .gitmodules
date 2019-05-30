@@ -11,3 +11,6 @@
 	path = ros/src/sensing/drivers/gnss/packages/novatel_gps_driver
 	url = https://github.com/hroachewilson/novatel_gps_driver.git
 	branch = master
+[submodule "ros/src/sensing/drivers/camera/usb/libuvc_ros"]
+	path = ros/src/sensing/drivers/camera/usb/libuvc_ros
+	url = https://github.com/hroachewilson/libuvc_ros.git
