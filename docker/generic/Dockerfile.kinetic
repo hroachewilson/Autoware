@@ -55,7 +55,8 @@ RUN apt-get update && apt-get install -y \
     ros-kinetic-dbw-mkz-can \
     ros-kinetic-dataspeed-can-msgs \
     ros-kinetic-novatel-gps-driver \
-    ros-kinetic-delphi-esr
+    ros-kinetic-delphi-esr \
+    ros-kinetic-libuvc-camera
 
 RUN apt-get update && apt-get install -y libnlopt-dev freeglut3-dev qtbase5-dev libqt5opengl5-dev libssh2-1-dev libarmadillo-dev libpcap-dev gksu libgl1-mesa-dev libglew-dev python-wxgtk3.0 software-properties-common libmosquitto-dev libyaml-cpp-dev python-flask python-requests
 
@@ -95,6 +96,10 @@ RUN echo "source /home/$USERNAME/Autoware/ros/devel/setup.bash" >> /home/$USERNA
 # Setting
 ENV LANG="en_US.UTF-8"
 RUN echo "export LANG=\"en_US.UTF-8\"" >> /home/$USERNAME/.bashrc
+
+# Add a rule for our [Leopard Imaging] camera and update device permissions
+#RUN sudo echo "SUBSYSTEMS==\"usb\", ENV{DEVTYPE}==\"usb_device\", ATTRS{idVendor}==\"2a0b\", ATTRS{idProduct}==\"00db\", MODE=\"0666\"" > /etc/udev/rules.d/99-uvc.rules
+#RUN sudo chmod o+w /dev/bus/usb/002/004
 
 # Install dev tools
 RUN sudo apt-get -y install vim tmux

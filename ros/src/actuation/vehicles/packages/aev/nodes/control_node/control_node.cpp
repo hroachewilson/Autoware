@@ -39,16 +39,14 @@ int main(int argc, char **argv)
   ros::XMLRPCManager::instance()->bind("shutdown", shutdownCallback);
 
 	ros::NodeHandle nh_;
-	std_msgs::Bool msg;
-	ros::Publisher pacmod_control_mode_pub;
 	ros::Publisher aev_control_mode_pub;
 
+	std_msgs::Bool msg;
 	msg.data = true;
 
   // Instantiate control node publisher
-  pacmod_control_mode_pub   = nh_.advertise<std_msgs::Bool>("/as_rx/enable", 10, true);
+  
   aev_control_mode_pub      = nh_.advertise<std_msgs::Bool>("/aev/control_mode", 10, true);
-	pacmod_control_mode_pub.publish(msg);
 	aev_control_mode_pub.publish(msg);
 
 	// Do our own spin loop
@@ -63,7 +61,6 @@ int main(int argc, char **argv)
 	// Node is shutting down. Unlatch autopilot
 	msg.data = false;	
 	aev_control_mode_pub.publish(msg);
-	pacmod_control_mode_pub.publish(msg);
 	ros::shutdown();
 
   return 0;

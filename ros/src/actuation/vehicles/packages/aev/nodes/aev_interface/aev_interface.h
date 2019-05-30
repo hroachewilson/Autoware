@@ -26,6 +26,7 @@
 #include <dbw_mkz_msgs/SteeringReport.h>
 #include <pacmod_msgs/PacmodCmd.h>
 #include <pacmod_msgs/PositionWithSpeed.h>
+#include <sensor_msgs/Joy.h>
 
 namespace aev
 {
@@ -50,10 +51,17 @@ private:
   ros::Publisher speed_cmd_pub_;
   ros::Publisher brake_cmd_pub_;
 
+  // game controller variables
+  static constexpr float ROT_RANGE_SCALER_LB = 0.05;
+  static constexpr float STEER_OFFSET = 1.0;
+  static constexpr int STEERING_AXIS = 0;
+  static constexpr float MAX_ROT_RAD_DEFAULT = 0.75;
+
   // subscriber
   ros::Subscriber twist_cmd_sub_;
   ros::Subscriber control_mode_sub_;
   ros::Subscriber speed_sub_;
+  ros::Subscriber joy_sub_;
 
   // ros param
   double acceleration_limit_;
@@ -67,6 +75,7 @@ private:
   void callbackFromTwistCmd(const geometry_msgs::TwistStampedConstPtr &msg);
   void callbackFromControlMode(const std_msgs::BoolConstPtr &msg);
   void callbackFromSteeringReport(const dbw_mkz_msgs::SteeringReportConstPtr &msg);
+  void callbackFromJoy(const sensor_msgs::Joy::ConstPtr& msg);
 
   // initializer
   void initForROS();
