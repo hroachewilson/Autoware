@@ -1,19 +1,16 @@
 <?xml version="1.0"?>
 <launch>
 
-  <!-- darknet settings -->
-  <arg name="score_threshold" default="0.30" />
-  <arg name="nms_threshold" default="0.30" />
-  <arg name="pretrained_model_file" default="$(env HOME)/.autoware/models/darknet/yolov3.weights" />
-  <arg name="camera_id" default="/camera" />
-
   <!-- vision_dpm_ttic_detect settings -->
   <arg name="car_detection" default="true" />
   <arg name="pedestrian_detection" default="true" />
-  <arg name="is_use_gpu" default="true" />
+  <arg name="is_use_gpu" default="false" />
+  <arg name="camera_id" default="/camera" />
+  <arg name="image_topic_src" default="$(arg camera_id)/image_raw" />
 
-  <!-- calibration_publisher >
-  <arg name="camera_calib" default="$(env HOME)/.autoware/metec/calibration/camera_lidar_3d/prius/nic-150407.yml"/>
+  <!-- calibration_publisher -->
+
+  <arg name="camera_calib" default="$(env HOME)/.autoware/data/calibration/camera_lidar_3d/prius/nic-150407.yml"/>
   <arg name="is_register_lidar2camera_tf" default="true" />
   <arg name="is_publish_projection_matrix" default="true" />
   <arg name="is_publish_camera_info" default="true" />
@@ -23,17 +20,17 @@
     <arg name="register_lidar2camera_tf" value="$(arg is_register_lidar2camera_tf)" />
     <arg name="publish_extrinsic_mat" value="$(arg is_publish_projection_matrix)" />
     <arg name="publish_camera_info" value="$(arg is_publish_camera_info)" />
-  </include-->
+  </include>
 
   <!-- points2image -->
   <node pkg="points2image" type="points2image" name="points2image" />
 
   <!-- car and pedestrian detection -->
-  <!-- darknet -->
-  <include file="$(find vision_darknet_detect)/launch/vision_yolo3_detect.launch">
-    <arg name="score_threshold" value="$(arg score_threshold)" />
-    <arg name="nms_threshold" value="$(arg nms_threshold)" />
-    <arg name="pretrained_model_file" value="$(arg pretrained_model_file)" />
+  <!-- dpm_ttic -->
+  <include file="$(find vision_dpm_ttic_detect)/launch/vision_dpm_ttic_detect.launch">
+    <arg name="car" value="$(arg car_detection)" />
+    <arg name="pedestrian" value="$(arg pedestrian_detection)" />
+    <arg name="use_gpu" value="$(arg is_use_gpu)" />
     <arg name="camera_id" value="$(arg camera_id)" />
   </include>
 
@@ -68,13 +65,13 @@
 
   <!-- traffic light recognition -->
   <!-- feat_proj -->
-
+  <!--
   <node pkg="trafficlight_recognizer" type="feat_proj" name="feat_proj" />
-
+  -->
 
   <!-- region_tlr -->
-
+  <!--
   <include file="$(find trafficlight_recognizer)/launch/traffic_light_recognition.launch" />
-
+  -->
 
 </launch>
