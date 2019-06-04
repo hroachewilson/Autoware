@@ -29,34 +29,58 @@
     <arg name="use_gpu" value="$(arg is_use_gpu)" />
   </include>
 
-  <!-- range_fusion -->
+  <!-- range_fusion >
   <include file="$(find range_fusion)/launch/range_fusion.launch">
     <arg name="car" value="$(arg car_detection)" />
     <arg name="pedestrian" value="$(arg pedestrian_detection)" />
-  </include>
+  </include-->
 
-  <!-- vision_klt_track -->
+  <!-- vision_klt_track >
   <include file="$(find vision_klt_track)/launch/vision_klt_track.launch">
     <arg name="car" value="$(arg car_detection)" />
     <arg name="pedestrian" value="$(arg pedestrian_detection)" />
-  </include>
+  </include-->
 
-  <!-- obj_reproj -->
+  <!-- obj_reproj >
   <include file="$(find obj_reproj)/launch/obj_reproj.launch">
     <arg name="car" value="$(arg car_detection)" />
     <arg name="pedestrian" value="$(arg pedestrian_detection)" />
-  </include>
+  </include-->
+
+  <!-- obj_fusion >
+  <include file="$(find obj_fusion)/launch/obj_fusion.launch">
+    <arg name="car" value="$(arg car_detection)" />
+    <arg name="pedestrian" value="$(arg pedestrian_detection)" />
+  </include-->
+
+  <!-- Notes:
+
+    We're trying to run naive motion predict, https://github.com/autowarefoundation/autoware/tree/master/ros/src/computing/perception/prediction/motion_predictor/packages/naive_motion_predict
+
+    Requirements:
+      ray_ground_filter
+      lidar_euclidean_cluster_detect
+      tf
+      imm_ukf_pda_track https://github.com/autowarefoundation/autoware/tree/master/ros/src/computing/perception/detection/lidar_tracker/packages/lidar_imm_ukf_pda_track
+        Requirements:
+          range_vision_fusion https://github.com/autowarefoundation/autoware/tree/master/ros/src/computing/perception/detection/fusion_tools/packages/range_vision_fusion
+            Requires camera etc.
+
+  -->
+
+  <!-- ray_ground_filter -->
+  <include file="$(find points_preprocessor)/launch/ray_ground_filter.launch"/>
 
   <!-- lidar_euclidean_cluster_detect -->
   <include file="$(find lidar_euclidean_cluster_detect)/launch/lidar_euclidean_cluster_detect.launch">
   </include>
 
-  <!-- obj_fusion -->
-  <include file="$(find obj_fusion)/launch/obj_fusion.launch">
-    <arg name="car" value="$(arg car_detection)" />
-    <arg name="pedestrian" value="$(arg pedestrian_detection)" />
+  <!-- range_fusion -->
+  <include file="$(find range_vision_fusion)/launch/range_vision_fusion.launch">
   </include>
 
+  <!-- imm_ukf_pda_track -->
+  <include file="$(find imm_ukf_pda_track)/launch/imm_ukf_pda_track.launch"/>
 
   <!-- traffic light recognition -->
   <!-- feat_proj -->

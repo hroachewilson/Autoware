@@ -10,7 +10,7 @@
 
   <!-- calibration_publisher -->
 
-  <arg name="camera_calib" default="$(env HOME)/.autoware/data/calibration/camera_lidar_3d/prius/nic-150407.yml"/>
+  <arg name="camera_calib" default="$(env HOME)/shared_dir/data/calibration/camera_lidar_3d/prius/nic-150407.yml"/>
   <arg name="is_register_lidar2camera_tf" default="true" />
   <arg name="is_publish_projection_matrix" default="true" />
   <arg name="is_publish_camera_info" default="true" />

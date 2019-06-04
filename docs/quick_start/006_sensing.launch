@@ -82,7 +82,7 @@
   <arg name="map_offset_rotation" default="2.0" />
 
   <!--Leopard Imaging UVC camera parameters-->
-  <arg name="camera_calib" default="$(env HOME)/.autoware/metec/calibration/dummy-calibration.yml"/>
+  <arg name="camera_calib" default="$(env HOME)/shared_dir/metec/calibration/dummy-calibration.yml"/>
 
   <!-- Map origin points in lat lon and utm coordinates stored here
 

@@ -2,12 +2,12 @@
 <launch>
 
   <!-- TF -->
-  <include file="$(env HOME)/.autoware/metec/tf/tf.launch"/>
+  <include file="$(env HOME)/shared_dir/metec/tf/tf.launch"/>
 
   <!-- Point Cloud -->
-  <node pkg="map_file" type="points_map_loader" name="points_map_loader" args="noupdate $(env HOME)/.autoware/metec/map/pointcloud_map/shifted-lap3-map1-autoware-190515.pcd" />
+  <node pkg="map_file" type="points_map_loader" name="points_map_loader" args="noupdate $(env HOME)/shared_dir/metec/map/pointcloud_map/shifted-lap3-map1-autoware-190515.pcd" />
 
   <!-- Vector Map -->
-  <node pkg="map_file" type="vector_map_loader" name="vector_map_loader" args="$(env HOME)/.autoware/metec/map/vector_map/area.csv $(env HOME)/.autoware/metec/map/vector_map/crosswalk.csv $(env HOME)/.autoware/metec/map/vector_map/idx.csv $(env HOME)/.autoware/data/map/vector_map/intersection.csv $(env HOME)/.autoware/metec/map/vector_map/lane.csv $(env HOME)/.autoware/metec/map/vector_map/line.csv $(env HOME)/.autoware/metec/map/vector_map/node.csv $(env HOME)/.autoware/metec/map/vector_map/point.csv $(env HOME)/.autoware/metec/map/vector_map/stopline.csv $(env HOME)/.autoware/metec/map/vector_map/wayarea.csv $(env HOME)/.autoware/metec/map/vector_map/whiteline.csv"/>
+  <node pkg="map_file" type="vector_map_loader" name="vector_map_loader" args="$(env HOME)/shared_dir/metec/map/vector_map/area.csv $(env HOME)/shared_dir/metec/map/vector_map/crosswalk.csv $(env HOME)/shared_dir/metec/map/vector_map/idx.csv $(env HOME)/shared_dir/data/map/vector_map/intersection.csv $(env HOME)/shared_dir/metec/map/vector_map/lane.csv $(env HOME)/shared_dir/metec/map/vector_map/line.csv $(env HOME)/shared_dir/metec/map/vector_map/node.csv $(env HOME)/shared_dir/metec/map/vector_map/point.csv $(env HOME)/shared_dir/metec/map/vector_map/stopline.csv $(env HOME)/shared_dir/metec/map/vector_map/wayarea.csv $(env HOME)/shared_dir/metec/map/vector_map/whiteline.csv"/>
 </launch>
 
