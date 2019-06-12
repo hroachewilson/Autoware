@@ -1,86 +1,23 @@
 <?xml version="1.0"?>
 <launch>
 
-  <!-- OpenPlanner - op_common_params -->
-  <arg name="mapSource"                  value="0" /> <!-- Autoware=0, Vector Map Folder=1, kml=2 -->
-  <arg name="mapFileName"                value="" />
+  <!-- Vehicle Contorl -->
+  <include file="$(find runtime_manager)/scripts/vehicle_socket.launch"/>
 
-  <arg name="pathDensity"                value="0.5" />
-  <arg name="rollOutDensity"             value="0.5" />
-  <arg name="rollOutsNumber"             value="6"    />
+  <!-- obstacle_avoid -->
+  <include file="$(find astar_planner)/launch/obstacle_avoid.launch"/>
 
-  <arg name="maxVelocity"                value="6.0" />
-  <arg name="minVelocity"                value="0.1" />
-  <arg name="maxLocalPlanDistance"       value="50" />
-  <arg name="horizonDistance"            value="200"  />
+  <!-- velocity_set -->
+  <include file="$(find astar_planner)/launch/velocity_set.launch"/>
 
-  <arg name="minFollowingDistance"       value="35.0"  /> <!-- should be bigger than Distance to follow -->
-  <arg name="minDistanceToAvoid"         value="20.0" /> <!-- should be smaller than minFollowingDistance and larger than maxDistanceToAvoid -->
-  <arg name="maxDistanceToAvoid"         value="5.0"  /> <!-- should be smaller than minDistanceToAvoid -->
-  <arg name="speedProfileFactor"         value="1.2"  />
-
-  <arg name="smoothingDataWeight"        value="0.45"  />
-  <arg name="smoothingSmoothWeight"      value="0.4"  />
-
-  <arg name="horizontalSafetyDistance"   value="1.2"  />
-  <arg name="verticalSafetyDistance"     value="0.8"  />
-
-  <arg name="enableSwerving"             value="true"  />
-  <arg name="enableFollowing"            value="true" />
-  <arg name="enableTrafficLightBehavior" value="false" />
-  <arg name="enableStopSignBehavior"     value="false" />
-  <arg name="enableLaneChange"           value="false" />
-
-  <arg name="width"                      value="1.85"  />
-  <arg name="length"                     value="4.2"  />
-  <arg name="wheelBaseLength"            value="2.7"  />
-  <arg name="turningRadius"              value="5.2"  />
-  <arg name="maxSteerAngle"              value="0.45" />
-
-  <arg name="steeringDelay"              value="1.2" />
-  <arg name="minPursuiteDistance"        value="3.0"  />
-  <arg name="additionalBrakingDistance"  value="5.0"  />
-
-  <arg name="giveUpDistance"             value="-4.0"  />
-
-  <arg name="maxAcceleration"            value="3.0" />
-  <arg name="maxDeceleration"            value="-3.0" />
-
-  <arg name="velocitySource"             value="2" /> <!-- read velocities from (0- Odometry, 1- autoware current_velocities, 2- car_info) "" -->
-
-  <!-- OpenPlanner - op_trajectory_generator -->
-  <arg name="samplingTipMargin"          value="4"  />
-  <arg name="samplingOutMargin"          value="16" />
-  <arg name="samplingSpeedFactor"        value="0.25" />
-  <arg name="enableHeadingSmoothing"     value="false" />
-
-  <!-- OpenPlanner - op_motion_predictor -->
-  <arg name="max_distance_to_lane"       value="1.0"/>
-  <arg name="prediction_distance"        value="25.0"/>
-  <arg name="enableGenrateBranches"      value="false"/>
-  <arg name="enableCurbObstacles"        value="false" />
-  <arg name="distanceBetweenCurbs"       value="1.5" />
-  <arg name="visualizationTime"          value="0.25" />
-  <arg name="enableStepByStepSignal"     value="false" />
-  <arg name="enableParticleFilterPrediction"      value="false" />
-
-  <!-- OpenPlanner - op_trajectory_evaluator -->
-  <arg name="enablePrediction"           value="false" />                                             
-  <!--arg name="horizontalSafetyDistance"   value="1.2" /-->
-  <!--arg name="verticalSafetyDistance"     value="0.8" /-->
-
-  <!-- OpenPlanner - op_behavior_selector -->
-  <arg name="evidence_tust_number"       value="25"/>
-
-  <!-- OpenPlanner - Local Planning -->
-  <include file="$(find op_local_planner)/launch/op_common_params.launch"/>
-  <include file="$(find op_local_planner)/launch/op_trajectory_generator.launch"/>
-  <include file="$(find op_local_planner)/launch/op_motion_predictor.launch"/>
-  <include file="$(find op_local_planner)/launch/op_trajectory_evaluator.launch"/>
-  <include file="$(find op_local_planner)/launch/op_behavior_selector.launch"/>
-
-  <!-- Vehicle Actuation -->
+  <!-- pure_pursuit -->
+  <node pkg="rostopic" type="rostopic" name="config_waypoint_follower_rostopic"
+        args="pub -l /config/waypoint_follower autoware_config_msgs/ConfigWaypointFollower
+        '{ header: auto, param_flag: 1, velocity: 5.0, lookahead_distance: 4.0, lookahead_ratio: 2.0, minimum_lookahead_distance: 6.0, displacement_threshold: 0.0, relative_angle_threshold: 0.0 }' "
+  />
   <include file="$(find waypoint_follower)/launch/pure_pursuit.launch"/>
+
+  <!-- twist_filter -->
   <include file="$(find waypoint_follower)/launch/twist_filter.launch"/>
 
 </launch>

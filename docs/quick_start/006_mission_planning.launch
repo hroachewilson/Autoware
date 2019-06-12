@@ -19,7 +19,7 @@
   <!-- waypoint_loader -->
   <node pkg="rostopic" type="rostopic" name="config_waypoint_loader_rostopic"
         args="pub -l /config/waypoint_loader autoware_config_msgs/ConfigWaypointLoader
-        '{multi_lane_csv: '$(env HOME)/shared_dir/metec/path/metec_path.txt', replanning_mode: true, velocity_max: 20.0, velocity_min: 4.0, accel_limit: 0.98, decel_limit: 0.98, radius_thresh: 20.0, radius_min: 6.0, resample_mode: true, resample_interval: 1.0, velocity_offset: 4, end_point_offset: 5}' "
+        '{multi_lane_csv: '$(env HOME)/shared_dir/metec/path/cw_metec_path.txt', replanning_mode: true, velocity_max: 20.0, velocity_min: 4.0, accel_limit: 0.98, decel_limit: 0.98, radius_thresh: 20.0, radius_min: 6.0, resample_mode: true, resample_interval: 1.0, velocity_offset: 4, end_point_offset: 5}' "
   />
   <include file="$(find waypoint_maker)/launch/waypoint_loader.launch" />
 

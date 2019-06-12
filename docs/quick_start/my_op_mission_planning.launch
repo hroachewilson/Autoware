@@ -33,14 +33,14 @@
   <node pkg="lane_planner" type="lane_navi" name="lane_navi" />
   -->
 
-  <!-- lane_rule -->
-  <node pkg="lane_planner" type="lane_rule" name="lane_rule" />
+  <!-- lane_rule >
+  <node pkg="lane_planner" type="lane_rule" name="lane_rule" /-->
 
-  <!-- lane_stop -->
-  <node pkg="lane_planner" type="lane_stop" name="lane_stop" />
+  <!-- lane_stop >
+  <node pkg="lane_planner" type="lane_stop" name="lane_stop" /-->
 
-  <!-- lane_select -->
-  <node pkg="lane_planner" type="lane_select" name="lane_select" />
+  <!-- lane_select >
+  <node pkg="lane_planner" type="lane_select" name="lane_select" /-->
 
 </launch>
 

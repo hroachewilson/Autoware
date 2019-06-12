@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<launch>
+
+<!--####################################### ARGUMENTS ##########################################-->
+
+  <!-- vel_pose_mux args -->
+  <arg name="topic_pose_stamped"        value="/ndt_pose" />
+  <arg name="topic_twist_stamped"       value="/estimate_twist" />
+  <arg name="sim_mode"                  value="false" />
+
+  <!-- lidar_kf_contour_track args -->
+  <arg name="vehicle_width"             value="1.85" />
+  <arg name="vehicle_length"            value="4.2" />
+  <arg name="enableLogging"             value="true" />
+  <arg name="enableSimulationMode"      value="false" />
+
+  <!-- op_global_planner args -->
+  <arg name="enableSmoothing"           value="true" />
+  <arg name="enableLaneChange"          value="true" />
+  <arg name="enableRvizInput"           value="true" />
+  <arg name="enableReplan"              value="true" />
+  <arg name="mapSource"                 value="1" /> <!-- Autoware=0, Vector Map Folder=1, kml file=2 -->
+  <arg name="mapFileName"               value="/home/autoware/shared_dir/metec/map/vector_map/" />
+  <arg name="enableDynamicMapUpdate"    value="false" />
+
+
+<!--########################################## NODES ###########################################-->
+
+  <!-- vel_pose_mux -->
+  <include file="$(find autoware_connector)/launch/vel_pose_connect.launch">
+    <arg name="topic_pose_stamped" value="$(arg topic_pose_stamped)" />
+    <arg name="topic_twist_stamped" value="$(arg topic_twist_stamped)" />
+    <arg name="sim_mode" value="$(arg sim_mode)" />
+  </include>
+
+  <!-- waypoint_loader >
+  <node pkg="rostopic" type="rostopic" name="config_waypoint_loader_rostopic"
+        args="pub -l /config/waypoint_loader autoware_config_msgs/ConfigWaypointLoader
+        '{multi_lane_csv: '$(env HOME)/shared_dir/metec/path/metec_path.txt', replanning_mode: true, velocity_max: 20.0, velocity_min: 4.0, accel_limit: 0.98, decel_limit: 0.98, radius_thresh: 20.0, radius_min: 6.0, resample_mode: true, resample_interval: 1.0, velocity_offset: 4, end_point_offset: 5}' "
+  />
+  <include file="$(find waypoint_maker)/launch/waypoint_loader.launch" /-->
+
+  <!-- lidar_kf_contour_track -->
+  <include file="$(find lidar_kf_contour_track)/launch/lidar_kf_contour_track.launch">
+    <arg name="vehicle_width" value="$(arg vehicle_width)" />
+    <arg name="vehicle_length" value="$(arg vehicle_length)" />
+    <arg name="enableLogging" value="$(arg enableLogging)" />
+    <arg name="enableSimulationMode" value="$(arg enableSimulationMode)" />
+  </include>
+
+  <!-- op_global_planner -->
+  <include file="$(find op_global_planner)/launch/op_global_planner.launch">
+    <arg name="enableSmoothing" value="$(arg enableSmoothing)" />
+    <arg name="enableLaneChange" value="$(arg enableLaneChange)" />
+    <arg name="enableRvizInput" value="$(arg enableRvizInput)" />
+    <arg name="enableReplan" value="$(arg enableReplan)" />
+    <arg name="mapSource" value="$(arg mapSource)" />
+    <arg name="mapFileName" value="$(arg mapFileName)" />
+    <arg name="enableDynamicMapUpdate" value="$(arg enableDynamicMapUpdate)" />
+  </include>
+
+</launch>
+
