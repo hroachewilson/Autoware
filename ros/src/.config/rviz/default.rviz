@@ -421,7 +421,7 @@ Visualization Manager:
         {}
       Queue Size: 100
       Value: true
-    - Class: rviz/Marker
+    - Class: rviz/MarkerArray
       Enabled: true
       Marker Topic: /behavior_state
       Name: Behavior State
