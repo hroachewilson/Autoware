@@ -1,15 +1,18 @@
 # AEV Autoware Fork
 
-The purpose of this fork is to implement an interface, modelled on autonomoustuff's ssc_interface, that sends and receives can messages for throttle and steering wheel position. The Autoware Process Manager UI has been updated to include an Drive By Wire button, and functionality has been added to the Auto Pilot button so that it toggles a control_mode message on the /aev/control_mode topic. The result is that steering and throttle can messages are enabled/disabled. 
+This repo was forked from Autoware main on March 4 and to date we are 249 commits behind master. Future work should merge progress from Autoware main into this fork.
 
-To achieve this, two activities have taken place. 
-1. The Dockerfile edited so as to install drivers for Kvaser Leaf Lite 2 can interface;
-2. AEV actuation packages have been created in ros/src/actuation/vehicles/packages/aev/ directory; and
-3. Submodules have been forked from autonomoustuff git repo for pacmod controller and pacmod_game_controller. AEV Vehicle has been added to pacmod with a view towards identifying a unique set of CAN bus messages for use with AEV platform. See submodule readme for details. Standard pacmod messages [described in wiki](http://wiki.ros.org/pacmod)
+There are three primary additions that have been built into our fork so far.
 
-TODO: Add support for arm/PX2 architecture using PX2 CAN interface and Autoware ARM image available [on dockerhub](https://hub.docker.com/r/autoware/autoware/)
+1. Support for Delphi radar in native build, docker build and launch files
+2. Support for the latest lib_uvc camera driver for ros in native build, docker build and launch files. Our leopard imaging camera is now the default camera used in Autoware and is compatible with the CNNs supported by Autoware
+3. Support for Novatel INS, including SPAN. Imu and GNSS topics are now populated by reads from our Novatel INS
+4. AEV Actuation interface (see [README.md](https://github.com/hroachewilson/Autoware/tree/feature/aev_interface/ros/src/actuation/vehicles/packages/aev)), which supports actuation over CAN using a modified version of [pacmod](http://wiki.ros.org/pacmod) and a Kvaser LeafLite 2.0 CAN interface.
+5. Custom GNSS package that converts RTCM strings into UTM and projects them onto the map using a hard coded site reference in Croydon. We need to use a site reference so that the numbers used to project the GPS frame into the world frame arent too large. Rviz has a problem displaying proximal objects that have large translations between coordinate frames.
 
+## ----------------------------
 
+Original README.md
 
 ## ----------------------------
 
