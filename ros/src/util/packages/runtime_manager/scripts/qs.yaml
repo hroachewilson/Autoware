@@ -50,7 +50,7 @@ buttons :
     run : roslaunch runtime_manager tablet_socket.launch
   oculus_rift_qs :
     desc: oculus_rift_qs desc sample
-    run : echo 'oculus rift'
+    run : roslaunch aev aev_system_start.launch
   aev_interface_qs :
     desc: aev_interface_qs desc sample
     run : roslaunch aev aev_interface.launch

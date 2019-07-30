@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<launch>
+
+  <!-- Map -->
+  <include file="$(env HOME)/shared_dir/metec/quick_start/006_map.launch"/>
+
+  <!-- Sensing -->
+  <include file="$(env HOME)/shared_dir/metec/quick_start/006_sensing.launch"/>
+
+  <!-- Localisation -->
+  <include file="$(env HOME)/shared_dir/metec/quick_start/006_localization.launch"/>
+
+  <!-- Detection -->
+  <include file="$(env HOME)/shared_dir/metec/quick_start/006_detection.launch"/>
+
+  <!-- Mission Planning -->
+  <include file="$(env HOME)/shared_dir/metec/quick_start/006_mission_planning.launch"/>
+
+  <!-- Motion Planning -->
+  <include file="$(env HOME)/shared_dir/metec/quick_start/006_motion_planning.launch"/>
+
+<!-- 
+
+
+
+
+
+
+-->
+
+</launch>
+

@@ -30,10 +30,10 @@
   <arg name="vlp2_parent_frame_id" default="velodyne"/>
   <arg name="vlp2_frame_id" default="velodyne_rear"/>
 
-  <!-- base_link to camera, tf parameters-->
-  <arg name="cam_x" default="1.693"/>
+  <!-- base_link to camera, tf parameters. CAMERA ROTATED 180 DEGREES-->
+  <arg name="cam_x" default="2.781"/>
   <arg name="cam_y" default="0.0"/>
-  <arg name="cam_z" default="1.588"/>
+  <arg name="cam_z" default="-0.1"/>
   <arg name="cam_yaw" default="0.0"/>
   <arg name="cam_pitch" default="0.0"/>
   <arg name="cam_roll" default="0.0"/>
@@ -82,7 +82,7 @@
   <arg name="map_offset_rotation" default="2.0" />
 
   <!--Leopard Imaging UVC camera parameters-->
-  <arg name="camera_calib" default="$(env HOME)/shared_dir/metec/calibration/dummy-calibration.yml"/>
+  <arg name="camera_calib" default="$(env HOME)/shared_dir/metec/calibration/leopard-imaging_wide.yml"/>
 
   <!-- Map origin points in lat lon and utm coordinates stored here
 
@@ -105,9 +105,9 @@
 
 <!--##################################### LAUNCH CONFIG ########################################-->
   <arg name="with_vlp16s" default="true" />
-  <arg name="with_esr" default="true" />
-  <arg name="with_novatel" default="true" />
-  <arg name="with_gnss_localisation" default="true" />
+  <arg name="with_esr" default="false" />
+  <arg name="with_novatel" default="false" />
+  <arg name="with_gnss_localisation" default="false" />
 
 <!--##################################### TRANSFORMS ###########################################-->
   <!-- x y z (in meters) and yaw pitch roll (in radians)
@@ -165,12 +165,12 @@
               $(arg imu1_yaw) $(arg imu1_pitch) $(arg imu1_roll)
               $(arg imu1_parent_frame_id) $(arg imu1_frame_id) 100" /> 
 
-  <!--Map transforms-->
+  <!--Map transforms >
   <node pkg="tf"  type="static_transform_publisher" name="world_to_map" 
         args="$(arg map_offset_x) -$(arg map_offset_y) 0 0 0 0 /world /map $(arg tf_period_in_ms)" />
 
   <node pkg="tf"  type="static_transform_publisher" name="map_to_mobility" 
-        args="0 0 0 0 0 0 /map /mobility $(arg tf_period_in_ms)" />
+        args="0 0 0 0 0 0 /map /mobility $(arg tf_period_in_ms)" /-->
 
 <!--###################################### SENSOR NODES ########################################-->
 <!--Delphi ESR-->
@@ -241,7 +241,6 @@
       <arg name="camera_info_url" value="file://$(arg camera_calib)"/>
     </include>
   </group>
-
 <!--#################################### PROCESSING NODES #######################################-->
   <!-- Merge front and rear VLP16s -->
   <group if="$(arg with_vlp16s)">   

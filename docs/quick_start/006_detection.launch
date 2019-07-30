@@ -5,15 +5,15 @@
   <arg name="score_threshold" default="0.30" />
   <arg name="nms_threshold" default="0.30" />
   <arg name="pretrained_model_file" default="$(env HOME)/shared_dir/models/darknet/yolov3.weights" />
-  <arg name="camera_id" default="/camera" />
+  <arg name="camera_id" default="camera" />
 
   <!-- vision_dpm_ttic_detect settings -->
   <arg name="car_detection" default="true" />
   <arg name="pedestrian_detection" default="true" />
   <arg name="is_use_gpu" default="true" />
 
-  <!-- calibration_publisher >
-  <arg name="camera_calib" default="$(env HOME)/shared_dir/metec/calibration/camera_lidar_3d/prius/nic-150407.yml"/>
+  <!-- calibration_publisher -->
+  <arg name="camera_calib" default="$(env HOME)/shared_dir/metec/calibration/20190618_1557_autoware_camera_calibration.yaml"/>
   <arg name="is_register_lidar2camera_tf" default="true" />
   <arg name="is_publish_projection_matrix" default="true" />
   <arg name="is_publish_camera_info" default="true" />
@@ -23,7 +23,8 @@
     <arg name="register_lidar2camera_tf" value="$(arg is_register_lidar2camera_tf)" />
     <arg name="publish_extrinsic_mat" value="$(arg is_publish_projection_matrix)" />
     <arg name="publish_camera_info" value="$(arg is_publish_camera_info)" />
-  </include-->
+    <arg name="camera_id" value="$(arg camera_id)" />
+  </include>
 
   <!-- points2image -->
   <node pkg="points2image" type="points2image" name="points2image" />
@@ -66,7 +67,6 @@
     <arg name="car" value="$(arg car_detection)" />
     <arg name="pedestrian" value="$(arg pedestrian_detection)" />
   </include>
-
 
   <!-- traffic light recognition -->
   <!-- feat_proj -->
