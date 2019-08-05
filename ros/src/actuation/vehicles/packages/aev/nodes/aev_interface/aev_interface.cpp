@@ -63,9 +63,9 @@ void AevInterface::callbackFromJoy(const sensor_msgs::Joy::ConstPtr& msg)
     steer_cmd.header = msg->header;
 
     // Print status
-    std::cout << "mode: "  << control_mode_ << std::endl;
-    std::cout << "speed: " << steer_cmd.angular_velocity_limit << std::endl;
-    std::cout << "steer: " << steer_cmd.angular_position << std::endl;
+    //std::cout << "mode: "  << control_mode_ << std::endl;
+    //std::cout << "speed: " << steer_cmd.angular_velocity_limit << std::endl;
+    //std::cout << "steer: " << steer_cmd.angular_position << std::endl;
 
     // Publish data
     steer_cmd_pub_.publish(steer_cmd);
@@ -95,9 +95,9 @@ void AevInterface::callbackFromTwistCmd(const geometry_msgs::TwistStampedConstPt
     steer_cmd.angular_velocity_limit = msg->twist.linear.x;
 
     // Print status
-    std::cout << "mode: "  << control_mode_ << std::endl;
-    std::cout << "speed: " << steer_cmd.angular_velocity_limit << std::endl;
-    std::cout << "steer: " << steer_cmd.angular_position << std::endl;
+    //std::cout << "mode: "  << control_mode_ << std::endl;
+    //std::cout << "speed: " << steer_cmd.angular_velocity_limit << std::endl;
+    //std::cout << "steer: " << steer_cmd.angular_position << std::endl;
 
     // Publish data
     steer_cmd_pub_.publish(steer_cmd);

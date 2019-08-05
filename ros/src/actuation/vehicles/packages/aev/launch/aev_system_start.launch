@@ -10,8 +10,8 @@
   <!-- Localisation -->
   <include file="$(env HOME)/shared_dir/metec/quick_start/006_localization.launch"/>
 
-  <!-- Detection -->
-  <include file="$(env HOME)/shared_dir/metec/quick_start/006_detection.launch"/>
+  <!-- Detection >
+  <include file="$(env HOME)/shared_dir/metec/quick_start/006_detection.launch"/-->
 
   <!-- Mission Planning -->
   <include file="$(env HOME)/shared_dir/metec/quick_start/006_mission_planning.launch"/>

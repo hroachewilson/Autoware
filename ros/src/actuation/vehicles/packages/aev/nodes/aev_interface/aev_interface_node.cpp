@@ -39,11 +39,12 @@ int main(int argc, char **argv)
   ros::init(argc, argv, "aev_interface");
   ros::NodeHandle nh_;
   ros::Publisher pacmod_enable_pub_;
+  ros::Rate loop_rate(100); // Process input at 100Hz
 
   // Custom sigint handler for shutdown
-	signal(SIGINT, mySigIntHandler);
+  signal(SIGINT, mySigIntHandler);
 
-	// Override XMLRPC shutdown
+  // Override XMLRPC shutdown
   ros::XMLRPCManager::instance()->unbind("shutdown");
   ros::XMLRPCManager::instance()->bind("shutdown", shutdownCallback);
 
@@ -61,6 +62,7 @@ int main(int argc, char **argv)
   while (!g_request_shutdown)
   {
     ros::spinOnce();
+    loop_rate.sleep();
   }
 
 	// Node is shutting down. Unlatch autopilot

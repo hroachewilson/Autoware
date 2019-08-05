@@ -32,36 +32,36 @@ void shutdownCallback(XmlRpc::XmlRpcValue& params, XmlRpc::XmlRpcValue& result)
 int main(int argc, char **argv)
 {
   ros::init(argc, argv, "aev/control_node", ros::init_options::NoSigintHandler);
-	signal(SIGINT, mySigIntHandler);
+  signal(SIGINT, mySigIntHandler);
 
-	// Override XMLRPC shutdown
+  // Override XMLRPC shutdown
   ros::XMLRPCManager::instance()->unbind("shutdown");
   ros::XMLRPCManager::instance()->bind("shutdown", shutdownCallback);
 
-	ros::NodeHandle nh_;
-	ros::Publisher aev_control_mode_pub;
+  ros::NodeHandle nh_;
+  ros::Publisher aev_control_mode_pub;
+  ros::Rate loop_rate(10); // Publish control_mode at 10Hz
 
-	std_msgs::Bool msg;
-	msg.data = true;
+  std_msgs::Bool msg;
+  msg.data = true;
 
   // Instantiate control node publisher
   
   aev_control_mode_pub      = nh_.advertise<std_msgs::Bool>("/aev/control_mode", 10, true);
-	aev_control_mode_pub.publish(msg);
+  aev_control_mode_pub.publish(msg);
 
-	// Do our own spin loop
+  // Do our own spin loop
   while (!g_request_shutdown)
   {
     // Do non-callback stuff
-
     ros::spinOnce();
-    usleep(100000);
+    loop_rate.sleep();
   }
 
-	// Node is shutting down. Unlatch autopilot
-	msg.data = false;	
-	aev_control_mode_pub.publish(msg);
-	ros::shutdown();
+  // Node is shutting down. Unlatch autopilot
+  msg.data = false;	
+  aev_control_mode_pub.publish(msg);
+  ros::shutdown();
 
   return 0;
 }
