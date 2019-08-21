@@ -54,8 +54,9 @@ void AevInterface::callbackFromJoy(const sensor_msgs::Joy::ConstPtr& msg)
   {
     // Calculate steering angle from joystick msg
     pacmod_msgs::PositionWithSpeed steer_cmd;
-    float range_scale = fabs(msg->axes[STEERING_AXIS]) *
-        (STEER_OFFSET - ROT_RANGE_SCALER_LB) + ROT_RANGE_SCALER_LB;
+    //float range_scale = fabs(msg->axes[STEERING_AXIS]) *
+    //    (STEER_OFFSET - ROT_RANGE_SCALER_LB) + ROT_RANGE_SCALER_LB;
+    float range_scale = (STEER_OFFSET - ROT_RANGE_SCALER_LB) + ROT_RANGE_SCALER_LB;
 
     // Set steering position
     steer_cmd.angular_velocity_limit = 0.0;

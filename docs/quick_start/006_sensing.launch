@@ -21,10 +21,10 @@
   <arg name="vlp1_frame_id" value="velodyne" />
 
   <!-- velodyne to velodyne_rear, tf parameters-->
-  <arg name="vlp2_x" default="-1.4775"/>
-  <arg name="vlp2_y" default="-0.06647"/>
+  <arg name="vlp2_x" default="-1.4"/>
+  <arg name="vlp2_y" default="-0.05"/>
   <arg name="vlp2_z" default="0.0"/>
-  <arg name="vlp2_yaw" default="0.0"/>
+  <arg name="vlp2_yaw" default="0.008"/>
   <arg name="vlp2_pitch" default="0.0"/>
   <arg name="vlp2_roll" default="0.0"/>
   <arg name="vlp2_parent_frame_id" default="velodyne"/>
@@ -108,6 +108,7 @@
   <arg name="with_esr" default="false" />
   <arg name="with_novatel" default="false" />
   <arg name="with_gnss_localisation" default="false" />
+  <arg name="with_camera" default="false" />
 
 <!--##################################### TRANSFORMS ###########################################-->
   <!-- x y z (in meters) and yaw pitch roll (in radians)
@@ -125,7 +126,7 @@
 -->
  
   <!--ESR transforms-->
-  <node pkg="tf" 
+  <node pkg="tf" if="$(arg with_esr)"
         type="static_transform_publisher" 
         name="$(arg esr1_parent_frame_id)_to_$(arg esr1_frame_id)" 
         args="$(arg esr1_x) $(arg esr1_y) $(arg esr1_z) 
@@ -133,14 +134,14 @@
               $(arg esr1_parent_frame_id) $(arg esr1_frame_id) $(arg tf_period_in_ms)" /> 
 
   <!-- VLP16 transforms-->
-  <node pkg="tf" 
+  <node pkg="tf" if="$(arg with_vlp16s)"
         type="static_transform_publisher"
         name="$(arg vlp1_parent_frame_id)_to_$(arg vlp1_frame_id)" 
         args="$(arg vlp1_x) $(arg vlp1_y) $(arg vlp1_z) 
               $(arg vlp1_yaw) $(arg vlp1_pitch) $(arg vlp1_roll)
               $(arg vlp1_parent_frame_id) $(arg vlp1_frame_id) $(arg tf_period_in_ms)">
   </node>
-  <node pkg="tf" 
+  <node pkg="tf" if="$(arg with_vlp16s)"
         type="static_transform_publisher" 
         name="$(arg vlp2_parent_frame_id)_to_$(arg vlp2_frame_id)" 
         args="$(arg vlp2_x) $(arg vlp2_y) $(arg vlp2_z) 
@@ -149,7 +150,7 @@
   </node>
 
   <!--Camera transform -->
-  <node pkg="tf" 
+  <node pkg="tf" if="$(arg with_camera)"
         type="static_transform_publisher"
         name="$(arg cam_parent_frame_id)_to_$(arg cam_frame_id)" 
         args="$(arg cam_x) $(arg cam_y) $(arg cam_z) 
@@ -158,7 +159,7 @@
   </node>
 
   <!--IMU1 transforms-->
-  <node pkg="tf" 
+  <node pkg="tf" if="$(arg with_novatel)"
         type="static_transform_publisher" 
         name="$(arg imu1_parent_frame_id)_to_$(arg imu1_frame_id)" 
         args="$(arg imu1_x) $(arg imu1_y) $(arg imu1_z) 
@@ -236,7 +237,7 @@
   </group>
 
   <!-- Leopard Imaging libuvc Camera -->
-  <group ns="camera">
+  <group ns="camera" if="$(arg with_camera)">
     <include file="$(find libuvc_camera)/launch/libuvc_camera.launch">
       <arg name="camera_info_url" value="file://$(arg camera_calib)"/>
     </include>
