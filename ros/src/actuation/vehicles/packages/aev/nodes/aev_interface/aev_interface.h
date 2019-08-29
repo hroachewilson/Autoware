@@ -47,7 +47,8 @@ private:
   //ros::Publisher steer_mode_pub_;
   //ros::Publisher speed_mode_pub_;
   ros::Publisher current_twist_pub_;
-  ros::Publisher steer_cmd_pub_;
+  ros::Publisher front_steer_cmd_pub_;
+  ros::Publisher rear_steer_cmd_pub_;
   ros::Publisher speed_cmd_pub_;
   ros::Publisher brake_cmd_pub_;
 

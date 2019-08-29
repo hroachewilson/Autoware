@@ -33,7 +33,8 @@ void AevInterface::initForROS()
   //speed_mode_pub_     = nh_.advertise<automotive_platform_msgs::SpeedMode>("/aev/arbitrated_speed_commands", 10);
   current_twist_pub_    = nh_.advertise<geometry_msgs::TwistStamped>("aev_current_twist", 10);
 
-  steer_cmd_pub_        = nh_.advertise<pacmod_msgs::PositionWithSpeed>("as_rx/steer_cmd", 10);
+  front_steer_cmd_pub_        = nh_.advertise<pacmod_msgs::PositionWithSpeed>("as_rx/front_steer_cmd", 10);
+  rear_steer_cmd_pub_        = nh_.advertise<pacmod_msgs::PositionWithSpeed>("as_rx/rear_steer_cmd", 10);
   speed_cmd_pub_        = nh_.advertise<pacmod_msgs::PacmodCmd>("as_rx/speed_cmd", 10);
   brake_cmd_pub_        = nh_.advertise<pacmod_msgs::PacmodCmd>("as_rx/brake_cmd", 10);
 }
@@ -53,23 +54,56 @@ void AevInterface::callbackFromJoy(const sensor_msgs::Joy::ConstPtr& msg)
   if (!control_mode_)
   {
     // Calculate steering angle from joystick msg
-    pacmod_msgs::PositionWithSpeed steer_cmd;
-    //float range_scale = fabs(msg->axes[STEERING_AXIS]) *
-    //    (STEER_OFFSET - ROT_RANGE_SCALER_LB) + ROT_RANGE_SCALER_LB;
+    pacmod_msgs::PositionWithSpeed front_steer_cmd;
+    pacmod_msgs::PositionWithSpeed rear_steer_cmd;
+
+    // Use linear steering ratio
     float range_scale = (STEER_OFFSET - ROT_RANGE_SCALER_LB) + ROT_RANGE_SCALER_LB;
 
-    // Set steering position
-    steer_cmd.angular_velocity_limit = 0.0;
-    steer_cmd.angular_position = (range_scale * MAX_ROT_RAD_DEFAULT) * msg->axes[STEERING_AXIS];
-    steer_cmd.header = msg->header;
+    // Use parabolic steering ratio
+    //float range_scale = fabs(msg->axes[STEERING_AXIS]) *
+    //    (STEER_OFFSET - ROT_RANGE_SCALER_LB) + ROT_RANGE_SCALER_LB;
 
-    // Print status
-    //std::cout << "mode: "  << control_mode_ << std::endl;
-    //std::cout << "speed: " << steer_cmd.angular_velocity_limit << std::endl;
-    //std::cout << "steer: " << steer_cmd.angular_position << std::endl;
 
-    // Publish data
-    steer_cmd_pub_.publish(steer_cmd);
+    // Get controller state
+    bool right_pad = msg->buttons[4];
+    bool left_pad = msg->buttons[5];
+    float steering_angle = (range_scale * MAX_ROT_RAD_DEFAULT) * msg->axes[STEERING_AXIS];
+
+    // Set front steering position
+    front_steer_cmd.angular_velocity_limit = 0.0;
+    front_steer_cmd.angular_position = steering_angle; 
+    front_steer_cmd.header = msg->header;
+
+    // If left crab steer enable
+    if (left_pad && steering_angle > 0) 
+    {
+     // Set rear left steering position
+     rear_steer_cmd.angular_velocity_limit = 0.0;
+     rear_steer_cmd.angular_position = steering_angle; 
+     rear_steer_cmd.header = msg->header;
+    }
+
+    // If right crab steer enable
+    if (right_pad && steering_angle < 0) 
+    {
+     // Set rear right steering position
+     rear_steer_cmd.angular_velocity_limit = 0.0;
+     rear_steer_cmd.angular_position = steering_angle; 
+     rear_steer_cmd.header = msg->header;
+    }
+
+    // Disable crab steer under certain conditions, hence set rear steer angle to zero
+    if ((!right_pad && !left_pad) || // No pads engaged (normal steering)
+       (left_pad && steering_angle < 0 && !right_pad) || // Left pad engaged turning right
+       (right_pad && steering_angle > 0 && !left_pad)) // Right pad engaged turning left
+    {
+      rear_steer_cmd.angular_position = 0.0;
+    }
+
+    // Publish steer cmds
+    front_steer_cmd_pub_.publish(front_steer_cmd);
+    rear_steer_cmd_pub_.publish(rear_steer_cmd);
   }
 }
 
@@ -81,27 +115,24 @@ void AevInterface::callbackFromTwistCmd(const geometry_msgs::TwistStampedConstPt
     //float acceleration_limit = 3.0;
     //float deceleration_limit = 3.0;
     //pacmod_msgs::PacmodCmd brake_cmd;
-    //pacmod_msgs::PacmodCmd speed_cmd;
+    pacmod_msgs::PacmodCmd speed_cmd;
     pacmod_msgs::PositionWithSpeed steer_cmd;
 
     // Required information: Desired wheel angle [rad], angle velocity [rad/s], throttle pos [0,1]
 
     // Set headers
-    //speed_cmd.header = msg->header;
+    speed_cmd.header = msg->header;
     //brake_cmd.header = msg->header;
     steer_cmd.header = msg->header;
     
-    // Implement a hack such that desired steer angle and vehicle velocity stored in speed_cmd
+    // Send steering command
     steer_cmd.angular_position = msg->twist.angular.z / msg->twist.linear.x;
+    speed_cmd.f64_cmd = msg->twist.linear.x;
     steer_cmd.angular_velocity_limit = msg->twist.linear.x;
 
-    // Print status
-    //std::cout << "mode: "  << control_mode_ << std::endl;
-    //std::cout << "speed: " << steer_cmd.angular_velocity_limit << std::endl;
-    //std::cout << "steer: " << steer_cmd.angular_position << std::endl;
-
     // Publish data
-    steer_cmd_pub_.publish(steer_cmd);
+    front_steer_cmd_pub_.publish(steer_cmd);
+    speed_cmd_pub_.publish(speed_cmd);
   }
 }
 
