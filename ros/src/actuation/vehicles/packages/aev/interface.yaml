@@ -1,4 +1,4 @@
 - name: /aev_interface
-  publish: [/as_rx/steer_cmd, /as_rx/speed_cmd, /as_rx/brake_cmd,
+  publish: [/as_rx/front_steer_cmd, /as_rx/rear_steer_cmd, /as_rx/speed_cmd, /as_rx/brake_cmd,
     /aev_current_twist]
   subscribe: [/twist_cmd, /aev/control_mode, /vehicle/steering_report]

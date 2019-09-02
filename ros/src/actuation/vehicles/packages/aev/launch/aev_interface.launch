@@ -1,22 +1,21 @@
 <?xml version="1.0"?>
 <launch>
 
+  <arg name="acceleration_limit" default="3.0"/>
+  <arg name="deceleration_limit" default="3.0"/>
+  <arg name="max_curvature_rate" default="0.75"/>
+
+
   <node pkg="joy" type="joy_node" name="joy">
     <param name="coalesce_interval" type="double" value="0.02"/>
     <param name="default_trig_val" value="true"/>
     <param name="deadzone" value="0.0"/>
   </node>
 
-  <arg name="acceleration_limit" default="3.0"/>
-  <arg name="deceleration_limit" default="3.0"/>
-  <arg name="max_curvature_rate" default="0.75"/>
-
-  <node pkg="aev" type="aev_interface" name="aev_interface" >
+  <node pkg="aev" type="aev_interface" name="aev_interface" output="screen">
     <param name="acceleration_limit" value="$(arg acceleration_limit)"/>
     <param name="deceleration_limit" value="$(arg deceleration_limit)"/>
     <param name="max_curvature_rate" value="$(arg max_curvature_rate)"/>
   </node>
-
-  <!--include file="$(find pacmod)/launch/pacmod.launch" /-->
 
 </launch>

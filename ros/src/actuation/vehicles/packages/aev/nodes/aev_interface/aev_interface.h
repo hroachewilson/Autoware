@@ -57,17 +57,25 @@ private:
   static constexpr float STEER_OFFSET = 1.0;
   static constexpr int STEERING_AXIS = 0;
   static constexpr float MAX_ROT_RAD_DEFAULT = 0.75;
+  static constexpr float RANGE_THRESH = 0.5;
+  static constexpr float RANGE_SCALE = MAX_ROT_RAD_DEFAULT / (MAX_ROT_RAD_DEFAULT - RANGE_THRESH);
+  // Use parabolic steering ratio
+  //float range_scale = fabs(msg->axes[STEERING_AXIS]) *
+  //    (STEER_OFFSET - ROT_RANGE_SCALER_LB) + ROT_RANGE_SCALER_LB;
 
   // subscriber
   ros::Subscriber twist_cmd_sub_;
   ros::Subscriber control_mode_sub_;
   ros::Subscriber speed_sub_;
   ros::Subscriber joy_sub_;
+  ros::Subscriber spacenav_joy_sub_;
+  ros::Subscriber spacenav_twist_sub_;
 
   // ros param
   double acceleration_limit_;
   double deceleration_limit_;
   double max_curvature_rate_;
+  int8_t steer_mode_;
 
   // variables
   bool control_mode_;
@@ -77,6 +85,8 @@ private:
   void callbackFromControlMode(const std_msgs::BoolConstPtr &msg);
   void callbackFromSteeringReport(const dbw_mkz_msgs::SteeringReportConstPtr &msg);
   void callbackFromJoy(const sensor_msgs::Joy::ConstPtr& msg);
+  void callbackFromSpacenavJoy(const sensor_msgs::Joy::ConstPtr& msg);
+  void callbackFromSpacenavTwist(const geometry_msgs::Vector3::ConstPtr& msg);
 
   // initializer
   void initForROS();
