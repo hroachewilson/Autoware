@@ -27,7 +27,6 @@ void AevInterface::initForROS()
   control_mode_sub_     = nh_.subscribe("/aev/control_mode", 10, &AevInterface::callbackFromControlMode, this);
   speed_sub_            = nh_.subscribe("/vehicle/steering_report", 10, &AevInterface::callbackFromSteeringReport, this);
   joy_sub_              = nh_.subscribe("joy", 1000, &AevInterface::callbackFromJoy, this);
-  spacenav_joy_sub_     = nh_.subscribe("/spacenav/joy", 1000, &AevInterface::callbackFromSpacenavJoy, this);
   spacenav_twist_sub_   = nh_.subscribe("/spacenav/twist", 1000, &AevInterface::callbackFromSpacenavTwist, this);
 
   // setup publisher
@@ -41,9 +40,7 @@ void AevInterface::initForROS()
   brake_cmd_pub_        = nh_.advertise<pacmod_msgs::PacmodCmd>("as_rx/brake_cmd", 10);
 
   steer_mode_ = 0;
-  
-  // Default steering mode
-  std::cout << "2WS - Front Steering Engaged" << std::endl;
+  std::cout << "STEERING MODE 1:     2WS - Front Steering" << std::endl;
 }
 
 void AevInterface::run()
@@ -56,25 +53,23 @@ void AevInterface::run()
 /*
  * Called when a spacenav joy message is received
  */
-void AevInterface::callbackFromSpacenavJoy(const sensor_msgs::Joy::ConstPtr& msg)
+void AevInterface::callbackFromSpacenavTwist(const geometry_msgs::Twist::ConstPtr& msg)
 {
 
-  if (!control_mode_)
+  if (!control_mode_ && steer_mode_ == 7)
   {
-    std::cout << "got spacenav joy message" << std::endl;
-  }
-}
 
+    // Steering command messages
+    pacmod_msgs::PositionWithSpeed front_steer_cmd;
+    pacmod_msgs::PositionWithSpeed rear_steer_cmd;
+    front_steer_cmd.angular_position = msg->angular.z;
+    rear_steer_cmd.angular_position = msg->angular.z * (msg->linear.z * 1.333333);
 
-/*
- * Called when a spacenav joy message is received
- */
-void AevInterface::callbackFromSpacenavTwist(const geometry_msgs::Vector3::ConstPtr& msg)
-{
-
-  if (!control_mode_)
-  {
-    std::cout << "got spacenav twist message" << std::endl;
+    // Pulish cmds
+    front_steer_cmd_pub_.publish(front_steer_cmd);
+    rear_steer_cmd_pub_.publish(rear_steer_cmd);
+    //std::cout << "front: " << front_steer_cmd.angular_position << std::endl;
+    //std::cout << "rear: " << rear_steer_cmd.angular_position << std::endl;
   }
 }
 
@@ -90,6 +85,8 @@ void AevInterface::callbackFromJoy(const sensor_msgs::Joy::ConstPtr& msg)
     // Steering command messages
     pacmod_msgs::PositionWithSpeed front_steer_cmd;
     pacmod_msgs::PositionWithSpeed rear_steer_cmd;
+    front_steer_cmd.header = msg->header;
+    rear_steer_cmd.header = msg->header;
 
     // Notify the user of steering mode and update mode select button
     if (msg->buttons[19] || msg->buttons[20])
@@ -98,36 +95,48 @@ void AevInterface::callbackFromJoy(const sensor_msgs::Joy::ConstPtr& msg)
       if (msg->buttons[19])
       {
         steer_mode_ += 1;
-        steer_mode_ %= 5;
+        steer_mode_ %= 8;
       } 
       else
       {
         steer_mode_ -= 1;
         if (steer_mode_ < 0)
         {
-          steer_mode_ = 4;
+          steer_mode_ = 7;
         }
       }
       
       if (steer_mode_ == 0)
       {
-        std::cout << "2WS - Front Steering Engaged" << std::endl;
+        std::cout << "STEERING MODE 1:     2WS - Front Steering" << std::endl;
       } 
       else if (steer_mode_ == 1 )
       {
-        std::cout << "2WS - Rear Steering Engaged" << std::endl;
+        std::cout << "STEERING MODE 2:     2WS - Rear Steering" << std::endl;
       }
       else if (steer_mode_ == 2 )
       {
-        std::cout << "4WS - Paddle Mode Engaged" << std::endl;
+        std::cout << "STEERING MODE 3:     4WS - Diamond Steer Mode" << std::endl;
       }
-      else if (steer_mode_ == 3 ) 
+      else if (steer_mode_ == 3 )
       {
-        std::cout << "4WS - Threshold Tight Mode Engaged" << std::endl;
+        std::cout << "STEERING MODE 4:     4WS - Crab Steer Mode" << std::endl;
+      }
+      else if (steer_mode_ == 4 )
+      {
+        std::cout << "STEERING MODE 5:     4WS - Threshold Crab Mode" << std::endl;
+      }
+      else if (steer_mode_ == 5 ) 
+      {
+        std::cout << "STEERING MODE 6:     4WS - Threshold Tight Mode" << std::endl;
+      }
+      else if (steer_mode_ == 6 ) 
+      {
+        std::cout << "STEERING MODE 7:     4WS - Threshold Crab Mode" << std::endl;
       }
       else 
       {
-        std::cout << "4WS - Threshold Crab Mode Engaged" << std::endl;
+        std::cout << "STEERING MODE 8:     4WS - SpaceMouse Mode" << std::endl;
       }
     }
 
@@ -150,7 +159,19 @@ void AevInterface::callbackFromJoy(const sensor_msgs::Joy::ConstPtr& msg)
       rear_steer_cmd.angular_position = steering_angle;
 
     }
-    else if (steer_mode_ == 2 ) // Four wheel paddle crab
+    else if (steer_mode_ == 2 ) // Four wheel diamond steer
+    {
+      // Set steering positions
+      front_steer_cmd.angular_position = steering_angle; 
+      rear_steer_cmd.angular_position = -steering_angle;
+    }
+    else if (steer_mode_ == 3 ) // Four wheel crab steer
+    {
+      // Set steering positions
+      front_steer_cmd.angular_position = steering_angle; 
+      rear_steer_cmd.angular_position = steering_angle;
+    }
+    else if (steer_mode_ == 4 ) // Four wheel paddle crab
     {
 
       // Get controller state
@@ -182,7 +203,7 @@ void AevInterface::callbackFromJoy(const sensor_msgs::Joy::ConstPtr& msg)
         rear_steer_cmd.angular_position = 0.0;
       }
     }
-    else if (steer_mode_ == 3) //Threshold inverted mode
+    else if (steer_mode_ == 5) //Threshold inverted mode
     {
       front_steer_cmd.angular_position = steering_angle; 
 
@@ -199,7 +220,7 @@ void AevInterface::callbackFromJoy(const sensor_msgs::Joy::ConstPtr& msg)
         rear_steer_cmd.angular_position = 0.0;
       }
     }
-    else //Threshold crab mode
+    else if (steer_mode_ == 6) //Threshold crab mode
     {
       front_steer_cmd.angular_position = steering_angle; 
 
@@ -216,17 +237,16 @@ void AevInterface::callbackFromJoy(const sensor_msgs::Joy::ConstPtr& msg)
         rear_steer_cmd.angular_position = 0.0;
       }
     }
-    // Set headers
-    front_steer_cmd.header = msg->header;
-    rear_steer_cmd.header = msg->header;
+    else {} //Spacemouse mode
 
-    // Publish steer cmds
-    front_steer_cmd_pub_.publish(front_steer_cmd);
-    rear_steer_cmd_pub_.publish(rear_steer_cmd);
-
-    //std::cout << "front: " << front_steer_cmd.angular_position << std::endl;
-    //std::cout << "rear: " << rear_steer_cmd.angular_position << std::endl;
-
+    // Publish steer cmds unless we're in spacemouse mode
+    if (steer_mode_ != 7)
+    {
+      front_steer_cmd_pub_.publish(front_steer_cmd);
+      rear_steer_cmd_pub_.publish(rear_steer_cmd);
+      //std::cout << "front: " << front_steer_cmd.angular_position << std::endl;
+      //std::cout << "rear: " << rear_steer_cmd.angular_position << std::endl;
+    }
   }
 }
 

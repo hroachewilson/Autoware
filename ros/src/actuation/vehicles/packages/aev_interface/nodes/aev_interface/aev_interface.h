@@ -68,7 +68,6 @@ private:
   ros::Subscriber control_mode_sub_;
   ros::Subscriber speed_sub_;
   ros::Subscriber joy_sub_;
-  ros::Subscriber spacenav_joy_sub_;
   ros::Subscriber spacenav_twist_sub_;
 
   // ros param
@@ -85,8 +84,7 @@ private:
   void callbackFromControlMode(const std_msgs::BoolConstPtr &msg);
   void callbackFromSteeringReport(const dbw_mkz_msgs::SteeringReportConstPtr &msg);
   void callbackFromJoy(const sensor_msgs::Joy::ConstPtr& msg);
-  void callbackFromSpacenavJoy(const sensor_msgs::Joy::ConstPtr& msg);
-  void callbackFromSpacenavTwist(const geometry_msgs::Vector3::ConstPtr& msg);
+  void callbackFromSpacenavTwist(const geometry_msgs::Twist::ConstPtr& msg);
 
   // initializer
   void initForROS();
